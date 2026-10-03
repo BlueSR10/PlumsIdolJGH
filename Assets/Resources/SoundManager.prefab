@@ -52,6 +52,10 @@ MonoBehaviour:
     delay: 0
     maxLength: 0.6
     fadeOut: 0.25
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
   - id: 1
     clip: {fileID: 8300000, guid: 52d57326b6301b746b73e52c2e93bba6, type: 3}
     volume: 0.8
@@ -59,6 +63,10 @@ MonoBehaviour:
     delay: 0
     maxLength: 0.5
     fadeOut: 0.2
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
   - id: 2
     clip: {fileID: 8300000, guid: 8358aaf1d2dd62a4d9dcd406e8effde3, type: 3}
     volume: 0.8
@@ -66,6 +74,10 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
   - id: 3
     clip: {fileID: 8300000, guid: 827ae3a363b2f3047a4094c7c453e04c, type: 3}
     volume: 1
@@ -73,6 +85,10 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
   - id: 4
     clip: {fileID: 8300000, guid: 7f78af4025efcb64faaa98a7bc2326b3, type: 3}
     volume: 1
@@ -80,6 +96,10 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
   - id: 5
     clip: {fileID: 8300000, guid: 625b423964b3fef42864dbe7bcb4336e, type: 3}
     volume: 0.9
@@ -87,6 +107,10 @@ MonoBehaviour:
     delay: 0.3
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
   - id: 6
     clip: {fileID: 8300000, guid: cb0b92d9e0a4767469276fe8f7cb7450, type: 3}
     volume: 1
@@ -94,6 +118,10 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
   - id: 7
     clip: {fileID: 8300000, guid: 5cc92dee13681e74dbf9b8347d209889, type: 3}
     volume: 0.6
@@ -101,6 +129,10 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
   - id: 8
     clip: {fileID: 8300000, guid: 43e39552e01a11d47ac59c814f489e53, type: 3}
     volume: 0.8
@@ -108,8 +140,49 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
+  - id: 9
+    clip: {fileID: 8300000, guid: 484ae5b461b25c8419f0346651ea667a, type: 3}
+    volume: 0.9
+    pitch: {x: 1, y: 1}
+    delay: 0
+    maxLength: 0
+    fadeOut: 0.15
+    trimStart: 1
+    loopStart: 1.5
+    loopEnd: 2.9
+    crossfade: 0.1
+  - id: 10
+    clip: {fileID: 8300000, guid: c6d55eb64da230346b5b36c3c8f62885, type: 3}
+    volume: 0.8
+    pitch: {x: 1, y: 1}
+    delay: 0
+    maxLength: 0
+    fadeOut: 0.15
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
+  - id: 11
+    clip: {fileID: 8300000, guid: 596e134eb47e0bf4b9f402c4ec55d29f, type: 3}
+    volume: 0.5
+    pitch: {x: 1, y: 1}
+    delay: 0
+    maxLength: 0
+    fadeOut: 0.15
+    trimStart: 0
+    loopStart: 0
+    loopEnd: 0
+    crossfade: 0.1
   voiceCount: 8
   sfxVolume: 1
   loopFadeTime: 0.25
+  dopplerSpeed: 30
+  projectileMinDistance: 10
+  projectileMaxDistance: 24
   bgmVolume: 1
   bgmFadeTime: 1
+  bgmPauseFadeTime: 0.1

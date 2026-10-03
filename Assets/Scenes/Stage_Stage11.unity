@@ -312,6 +312,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2659827776754446015, guid: e295665aaf5a50d4eb97d21ebd4dd5f7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 910923415}
+    - targetCorrespondingSourceObject: {fileID: 2659827776754446015, guid: e295665aaf5a50d4eb97d21ebd4dd5f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 910923416}
   m_SourcePrefab: {fileID: 100100000, guid: e295665aaf5a50d4eb97d21ebd4dd5f7, type: 3}
 --- !u!4 &298771959 stripped
 Transform:
@@ -823,6 +826,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2659827776754446015, guid: e295665aaf5a50d4eb97d21ebd4dd5f7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1523715083}
+    - targetCorrespondingSourceObject: {fileID: 2659827776754446015, guid: e295665aaf5a50d4eb97d21ebd4dd5f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1523715084}
   m_SourcePrefab: {fileID: 100100000, guid: e295665aaf5a50d4eb97d21ebd4dd5f7, type: 3}
 --- !u!1 &910923413 stripped
 GameObject:
@@ -850,6 +856,22 @@ MonoBehaviour:
   spawnAhead: 8
   flySpeed: 12
   followSpeed: 8
+--- !u!114 &910923416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910923413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e39fe633fec32c4cba2823fa4ca113c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileSound
+  detectMovement: 1
+  moveThreshold: 1
+  stopBehind: 8
+  fadeTime: 0.2
 --- !u!1001 &968907298
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1180,6 +1202,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SySlowBird
   flySpeed: 3.5
   triggerDistance: 7
+--- !u!114 &1523715084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1523715081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e39fe633fec32c4cba2823fa4ca113c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileSound
+  detectMovement: 1
+  moveThreshold: 1
+  stopBehind: 8
+  fadeTime: 0.2
 --- !u!1001 &1716225830
 PrefabInstance:
   m_ObjectHideFlags: 0

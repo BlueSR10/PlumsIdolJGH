@@ -13,11 +13,16 @@ public class FlyingHazard : MonoBehaviour
 
     Vector3 origin;
     Transform player;
+    ProjectileSound sound;
     bool flying;
 
     void Awake()
     {
         origin = transform.localPosition;
+        // 날아오는 소리(Wind + 도플러). 프리팹에 따로 붙이지 않아도 새 변형들이 모두 같은 소리를 쓴다
+        sound = GetComponent<ProjectileSound>();
+        if (sound == null) sound = gameObject.AddComponent<ProjectileSound>();
+        sound.DetectMovement = false;   // 날기 시작하는 시점을 아니까 Begin()/End()로 직접 제어
         StageReset.Requested += ResetState;
     }
 
@@ -36,6 +41,7 @@ public class FlyingHazard : MonoBehaviour
     {
         flying = false;
         transform.localPosition = origin;
+        sound.End();
     }
 
     void Update()
@@ -47,6 +53,7 @@ public class FlyingHazard : MonoBehaviour
         {
             if (transform.position.x - player.position.x > triggerDistance) return;
             flying = true;
+            sound.Begin();
         }
 
         transform.localPosition += Vector3.left * (flySpeed * Time.deltaTime);
