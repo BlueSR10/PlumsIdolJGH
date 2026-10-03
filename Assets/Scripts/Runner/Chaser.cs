@@ -18,6 +18,12 @@ public class Chaser : MonoBehaviour
     // 0(멀다) ~ 1(거의 잡힘). 추후 발소리 볼륨에 사용.
     public float Proximity => Mathf.Clamp01(1f - (Gap - catchDistance) / warningDistance);
 
+    public void Configure(float speed, float startGap)
+    {
+        this.speed = speed;
+        this.startGap = startGap;
+    }
+
     public void ResetTo(float x)
     {
         localX = x;

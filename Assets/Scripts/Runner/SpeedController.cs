@@ -21,6 +21,15 @@ public class SpeedController : MonoBehaviour
     public float ScrollSpeed => Frozen ? 0f : Speed;
     public float BaseSpeed => baseSpeed;
 
+    // 스테이지별 설정(StageSettings)이 시작 시 적용한다. Awake보다 먼저/나중에 불려도 결과가 같다.
+    public void Configure(float startSpeed, float acceleration)
+    {
+        this.startSpeed = startSpeed;
+        this.acceleration = acceleration;
+        baseSpeed = startSpeed;
+        Speed = startSpeed;
+    }
+
     public void Restore(float speed, float baseSpeed)
     {
         Speed = speed;
