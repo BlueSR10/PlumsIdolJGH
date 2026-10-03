@@ -2,7 +2,8 @@ using UnityEngine;
 
 // 플레이어 뒤에서 일정한 속도로 쫓아오는 추격자. Stage의 자식으로 두면 맵과 함께 움직인다.
 // 위치는 스테이지 로컬 X 좌표로 관리한다. 잡히는 판정은 선두(이 오브젝트)의 몸통 상자(바닥에서 위로 bodyHeight)와
-// 플레이어의 충돌 상자가 실제로 겹칠 때만 한다: 마녀가 점프로 쿠키 위에 떠 있으면 아래로 지나가도 잡히지 않는다.
+// 플레이어의 충돌 상자가 실제로 겹칠 때만 한다. 대신 쿠키는 마녀를 넘어갈 수 없다: 마녀가 점프·비행으로 위에 떠 있으면
+// 쿠키가 마녀 바로 아래까지만 따라붙어 기다리고(속도 조절), 마녀가 내려오면 닿아서 잡힌다 (쿠키를 뛰어넘어 지나치는 것을 막는다).
 // 자식 쿠키들은 군단처럼 보이는 그림일 뿐이다 (프리팹의 Crowd 자식). 몸통 상자는 그림이 폴짝 뛰어도 바닥에 둔다.
 public class Chaser : MonoBehaviour
 {
@@ -88,7 +89,14 @@ public class Chaser : MonoBehaviour
         var run = RunManager.Instance;
         if (run == null || run.Current != RunManager.State.Running) return;
 
-        localX += speed * Time.fixedDeltaTime;
+        float next = localX + speed * Time.fixedDeltaTime;
+
+        // 쿠키는 마녀를 넘어갈 수 없다: 마녀가 점프나 비행으로 위에 떠 있으면 마녀 바로 아래까지만 따라붙고,
+        // 그 뒤로는 마녀(스크롤)와 같은 속도로 아래에서 기다린다. 마녀가 내려오는 순간 닿아서 잡힌다.
+        // (뒤에 있을 때만 적용: 이미 앞서 있는 쿠키를 뒤로 끌어오지는 않는다)
+        if (Gap >= 0f) next = Mathf.Min(next, run.PlayerLocalX);
+
+        localX = next;
         Place();
         if (Touching()) run.Die();
     }
