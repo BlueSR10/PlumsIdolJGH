@@ -50,6 +50,11 @@ public class TitleScreen : MonoBehaviour
     void Update()
     {
         if (loading) return;
+#if UNITY_EDITOR
+        // 에디터 전용 단축키: F9 = 엔딩 바로 보기 (빌드에는 들어가지 않는다)
+        var kb = UnityEngine.InputSystem.Keyboard.current;
+        if (kb != null && kb.f9Key.wasPressedThisFrame) { loading = true; StageLoader.Load(StageCatalog.EndingScene); return; }
+#endif
         if (current == settings && controls.Back) { Show(main); return; }
         current.Tick(controls);
     }
