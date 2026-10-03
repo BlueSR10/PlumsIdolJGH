@@ -14,6 +14,9 @@ public class StageSettings : MonoBehaviour
     public float chaserSpeed = 4.5f;         // units/sec
     public float chaserStartGap = 8f;        // 시작 시 플레이어와의 거리
 
+    // Assets/Resources/Backgrounds/ 안의 배경 프리팹 이름. 비우면 배경 없음. Inspector 팝업(StageSettingsEditor)으로 고른다.
+    [HideInInspector] public string background = "";
+
     // 목표 플레이타임 (GDD: 스테이지당 30초 정도)
     public const float TargetSeconds = 30f;
 
@@ -31,6 +34,13 @@ public class StageSettings : MonoBehaviour
 
         var chaser = FindFirstObjectByType<Chaser>();
         if (chaser != null) chaser.Configure(chaserSpeed, chaserStartGap);
+
+        if (!string.IsNullOrEmpty(background))
+        {
+            var prefab = Resources.Load<GameObject>("Backgrounds/" + background);
+            if (prefab != null) Instantiate(prefab).name = background;
+            else Debug.LogWarning($"배경 '{background}'을(를) Assets/Resources/Backgrounds/에서 찾을 수 없습니다.", this);
+        }
     }
 
     // Scene 뷰 보조선: 시작 위치(초록)와 시작 화면 범위(회색, 640x360 기준 가로 10 x 세로 5.625)

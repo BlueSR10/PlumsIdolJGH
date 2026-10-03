@@ -67,6 +67,7 @@ MonoBehaviour:
   acceleration: 0.1
   chaserSpeed: 4.5
   chaserStartGap: 8
+  background: BG_Mountain
 --- !u!1001 &745427714245484438
 PrefabInstance:
   m_ObjectHideFlags: 0
