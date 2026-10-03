@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float slideHeightRatio = 0.5f;
 
     RunnerInput input;
+    WitchFlight flight;
     Rigidbody2D rb;
     BoxCollider2D col;
     ContactFilter2D groundFilter;
@@ -26,10 +27,12 @@ public class PlayerController : MonoBehaviour
     bool sliding;
 
     public bool Grounded { get; private set; }
+    public bool Flying => flight != null && flight.Active;
 
     void Awake()
     {
         input = GetComponent<RunnerInput>();
+        flight = GetComponent<WitchFlight>();
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<BoxCollider2D>();
         rb.gravityScale = gravityScale;
@@ -47,6 +50,12 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (Flying)
+        {
+            jumpBuffer = 0f;   // 비행 중 점프 키는 상승 조작
+            return;
+        }
+
         if (input.JumpPressed) jumpBuffer = jumpBufferTime;
         else jumpBuffer -= Time.deltaTime;
     }
@@ -54,6 +63,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         Grounded = col.IsTouching(groundFilter);
+        if (Flying) return;   // 비행 중 이동은 WitchFlight가 담당
 
         if (Grounded && rb.linearVelocity.y <= 0.1f) jumpsUsed = 0;
         else if (!Grounded && jumpsUsed == 0) jumpsUsed = 1;   // 점프 없이 공중에 뜬 경우 1회 소모
@@ -86,9 +96,25 @@ public class PlayerController : MonoBehaviour
         visual.localPosition = new Vector3(visualPos.x, visualPos.y - drop, visualPos.z);
     }
 
-    // 체크포인트 부활 시 호출. 위치와 점프/슬라이드 상태를 시작 상태로 되돌린다.
+    // 비행 시작/종료 (WitchFlight가 호출). 비행 중에는 중력을 끄고 점프·슬라이드를 막는다.
+    public void EnterFlight()
+    {
+        SetSliding(false);
+        jumpBuffer = 0f;
+        rb.gravityScale = 0f;
+        rb.linearVelocity = Vector2.zero;
+    }
+
+    public void ExitFlight()
+    {
+        rb.gravityScale = gravityScale;
+        jumpsUsed = maxJumps;   // 비행이 끝나면 착지할 때까지 공중 점프 없음
+    }
+
+    // 재시작 시 호출. 위치와 점프/슬라이드/비행 상태를 시작 상태로 되돌린다.
     public void ResetState()
     {
+        if (flight != null) flight.ResetState();
         rb.linearVelocity = Vector2.zero;
         rb.position = spawnPosition;
         transform.position = spawnPosition;
