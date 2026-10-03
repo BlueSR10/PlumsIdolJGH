@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 // 클리어하면 맵의 StageSettings.nextStage가 있을 때 전환 연출(8.4) 후 그 스테이지로 넘어가고, 없으면 같은 스테이지를 다시 시작한다.
 public class RunManager : MonoBehaviour
 {
-    public enum State { Running, Dead, Cleared, Intro }   // Intro = 스테이지 전환 직후 페이드 인 중 (아직 출발 전)
+    public enum State { Running, Dead, Cleared }
 
     [SerializeField] Rigidbody2D stage;
     [SerializeField] PlayerController player;
@@ -20,10 +20,11 @@ public class RunManager : MonoBehaviour
     [SerializeField] float transitionDelay = 0.6f;  // 클리어 후 어두워지기 시작할 때까지
     [SerializeField] float fadeOutTime = 0.9f;
     [SerializeField] float darkHoldTime = 0.6f;     // 완전히 어두운 채로 마녀만 보이는 시간
-    [SerializeField] float fadeInTime = 0.9f;
+    [SerializeField] float fadeInTime = 0.9f;       // 다음 스테이지에서 밝아지는 시간
 
     static bool fadeInPending;   // 전환으로 막 들어온 씬이면 어두운 상태에서 시작한다
 
+    bool fadingIn;
     float stateTimer;
     float spawnY;
     float startSpeed;
@@ -34,7 +35,7 @@ public class RunManager : MonoBehaviour
 
     public State Current { get; private set; }
     public bool Transitioning { get; private set; }   // 클리어 후 어두워지는 중
-    public bool HideHud => Transitioning || Current == State.Intro;   // 전환 연출 중에는 HUD를 숨긴다
+    public bool HideHud => Transitioning || fadingIn;   // 전환 연출 중에는 HUD를 숨긴다
     public float StageTime { get; private set; }
     public float PlayerLocalX => player.transform.position.x - stage.position.x;
     public float StartLocalX { get; private set; }
@@ -62,7 +63,7 @@ public class RunManager : MonoBehaviour
         if (fadeInPending)
         {
             fadeInPending = false;
-            StartCoroutine(Intro());
+            StartCoroutine(FadeIn());
         }
     }
 
@@ -75,7 +76,7 @@ public class RunManager : MonoBehaviour
             return;
         }
 
-        if (Current == State.Intro || Transitioning) return;
+        if (Transitioning) return;
 
         stateTimer -= Time.deltaTime;
         if (stateTimer <= 0f) Restart();
@@ -119,18 +120,16 @@ public class RunManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    // 전환으로 들어온 스테이지: 어두운 채로 마녀만 보이다가 밝아지면 출발한다
-    IEnumerator Intro()
+    // 전환으로 들어온 스테이지: 이전 스테이지에서 이어 달리는 채로 어두운 화면에서 마녀만 보이다가 밝아진다.
+    // 멈추지 않고 바로 Running이다 (맵 시작 부분은 비어 있어서 밝아지는 동안 위험하지 않다).
+    IEnumerator FadeIn()
     {
-        Current = State.Intro;
-        speed.Frozen = true;
+        fadingIn = true;
         fade.SetAlpha(1f);
         fade.LiftWitch(true);
-        yield return new WaitForSeconds(darkHoldTime);
         yield return fade.FadeTo(0f, fadeInTime);
         fade.LiftWitch(false);
-        speed.Frozen = false;
-        Current = State.Running;
+        fadingIn = false;
     }
 
     void Restart()
