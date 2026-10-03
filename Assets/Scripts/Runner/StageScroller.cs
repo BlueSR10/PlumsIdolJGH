@@ -15,6 +15,6 @@ public class StageScroller : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + Vector2.left * (speed.Speed * Time.fixedDeltaTime));
+        rb.MovePosition(rb.position + Vector2.left * (speed.ScrollSpeed * Time.fixedDeltaTime));
     }
 }
