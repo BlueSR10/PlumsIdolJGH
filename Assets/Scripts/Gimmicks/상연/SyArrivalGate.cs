@@ -13,6 +13,8 @@ public class SyArrivalGate : MonoBehaviour
     [SerializeField] bool requireSlide = true;
     [Tooltip("도착하는 순간 머리 위로 남는 틈 (유닛). 작을수록 아슬아슬하다")]
     [SerializeField, Min(0f)] float clearance = 0.1f;
+    [Tooltip("계산한 도착 시각보다 이만큼 늦게 열린다 (초). 0보다 크면 그대로 달려서는 닫혀 있고, 감속해서 늦게 와야 지나간다")]
+    [SerializeField, Min(0f)] float arrivalDelay;
     [Tooltip("플레이어와의 가로 거리가 이 값 이하가 되면 타이밍을 계산한다. 화면 오른쪽 끝은 플레이어에서 약 7")]
     [SerializeField, Min(0f)] float lockDistance = 8f;
     [Tooltip("슬라이드 중 충돌 높이 비율. PlayerController의 값과 같게 둔다")]
@@ -71,7 +73,7 @@ public class SyArrivalGate : MonoBehaviour
         if (!locked && run.Current == RunManager.State.Running && playerBox != null && speed != null)
         {
             float distance = box.bounds.min.x - playerBox.bounds.max.x;
-            if (distance <= lockDistance) Lock(run.StageTime + TimeToCover(Mathf.Max(0f, distance)));
+            if (distance <= lockDistance) Lock(run.StageTime + TimeToCover(Mathf.Max(0f, distance)) + arrivalDelay);
         }
 
         float s = Mathf.Sin((run.StageTime / period + phase) * Mathf.PI * 2f);
