@@ -26,13 +26,14 @@ public class TitleScreen : MonoBehaviour
 
         titleTexts.Add(MenuUI.Label(root, "Title", "런쿠키", 200, MenuUI.Gold, new Vector2(0f, 0.55f), new Vector2(1f, 0.85f)).gameObject);
         titleTexts.Add(MenuUI.Label(root, "Subtitle", "PLUM JAM", 56, MenuUI.Muted, new Vector2(0f, 0.47f), new Vector2(1f, 0.56f)).gameObject);
-        titleTexts.Add(MenuUI.Label(root, "Hint", "Enter / Space / Click", 36, MenuUI.Muted, new Vector2(0f, 0.03f), new Vector2(1f, 0.09f)).gameObject);
+        titleTexts.Add(MenuUI.Label(root, "Hint", "Enter / Space / Click", 36, MenuUI.Muted, new Vector2(0f, 0.01f), new Vector2(1f, 0.07f)).gameObject);
 
         main = new MenuPage(root, null, new List<MenuPage.Item>
         {
             new MenuPage.Item { label = "게임 시작", onConfirm = StartGame },
             new MenuPage.Item { label = "설정", onConfirm = () => Show(settings) },
-        }, new Vector2(0.35f, 0.11f), new Vector2(0.65f, 0.41f), panel: false, fontSize: 52);
+            new MenuPage.Item { label = "게임 종료", onConfirm = Quit },
+        }, new Vector2(0.35f, 0.10f), new Vector2(0.65f, 0.45f), panel: false, fontSize: 52);
         settings = MenuPage.Settings(root, () => Show(main), new Vector2(0.30f, 0.20f), new Vector2(0.70f, 0.80f));
         Show(main);
     }
@@ -57,6 +58,17 @@ public class TitleScreen : MonoBehaviour
 #endif
         if (current == settings && controls.Back) { Show(main); return; }
         current.Tick(controls);
+    }
+
+    // 게임 종료 (에디터에서는 플레이 모드를 끝낸다)
+    void Quit()
+    {
+        loading = true;
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     void StartGame()
