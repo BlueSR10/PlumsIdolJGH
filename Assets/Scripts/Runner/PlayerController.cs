@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 // 화면에 X 고정된 플레이어. 점프(체공 시간 고정)와 슬라이드(누르는 동안, 지상에서만)를 처리한다.
 [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(RunnerInput))]
@@ -21,6 +20,7 @@ public class PlayerController : MonoBehaviour
     Vector2 standOffset;
     Vector3 visualScale;
     Vector3 visualPos;
+    Vector3 spawnPosition;
     float jumpBuffer;
     int jumpsUsed;
     bool sliding;
@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
         groundFilter = new ContactFilter2D { useTriggers = false };
         groundFilter.SetNormalAngle(45f, 135f);
 
+        spawnPosition = transform.position;
         standSize = col.size;
         standOffset = col.offset;
         visualScale = visual.localScale;
@@ -85,10 +86,20 @@ public class PlayerController : MonoBehaviour
         visual.localPosition = new Vector3(visualPos.x, visualPos.y - drop, visualPos.z);
     }
 
+    // 체크포인트 부활 시 호출. 위치와 점프/슬라이드 상태를 시작 상태로 되돌린다.
+    public void ResetState()
+    {
+        rb.linearVelocity = Vector2.zero;
+        rb.position = spawnPosition;
+        transform.position = spawnPosition;
+        jumpBuffer = 0f;
+        jumpsUsed = 0;
+        SetSliding(false);
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
-        // M3에서 체크포인트 부활로 교체. 지금은 씬을 다시 불러온다.
         if (other.GetComponentInParent<Hazard>() != null)
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            RunManager.Instance.Die();
     }
 }

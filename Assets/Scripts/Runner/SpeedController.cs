@@ -19,6 +19,17 @@ public class SpeedController : MonoBehaviour
     // 공중에서는 속도 조절 불가. 마녀 비행 중에만 true (비행 구현 시 사용)
     public bool AirControl { get; set; }
 
+    // 사망/클리어 중에는 스크롤을 멈춘다
+    public bool Frozen { get; set; }
+    public float ScrollSpeed => Frozen ? 0f : Speed;
+    public float BaseSpeed => baseSpeed;
+
+    public void Restore(float speed, float baseSpeed)
+    {
+        Speed = speed;
+        this.baseSpeed = baseSpeed;
+    }
+
     void Awake()
     {
         baseSpeed = startSpeed;
@@ -27,6 +38,8 @@ public class SpeedController : MonoBehaviour
 
     void Update()
     {
+        if (Frozen) return;
+
         float dt = Time.deltaTime;
         baseSpeed += acceleration * dt;
 
