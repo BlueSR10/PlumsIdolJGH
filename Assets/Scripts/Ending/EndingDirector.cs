@@ -32,6 +32,7 @@ public class EndingDirector : MonoBehaviour
     [SerializeField] float surroundDistance = 2.3f;  // 마녀에서 가장 가까운 쿠키까지의 거리
     [SerializeField] float cookieSpacing = 0.8f;     // 같은 쪽 쿠키끼리의 간격
     [SerializeField] float cookieStagger = 0.25f;    // 쿠키가 출발하는 시간 차
+    [SerializeField] Vector2 hopInterval = new Vector2(0.4f, 1.8f);   // 선 쿠키가 폴짝 뛰는 쉬는 시간 범위 (초)
     [SerializeField] RuntimeAnimatorController cookieController;
     [SerializeField] Sprite cookieSprite;
 
@@ -182,7 +183,7 @@ public class EndingDirector : MonoBehaviour
             go.transform.localScale = new Vector3(side > 0 ? -1f : 1f, 1f, 1f);   // 오른쪽 쿠키는 왼쪽(마녀 쪽)을 본다
 
             var cookie = go.AddComponent<EndingCookie>();
-            cookie.Init(centerX + side * (surroundDistance + i * cookieSpacing), cookieSpeed);
+            cookie.Init(centerX + side * (surroundDistance + i * cookieSpacing), cookieSpeed, hopInterval);
             list.Add(cookie);
         }
         return list;
