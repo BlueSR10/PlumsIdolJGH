@@ -12,10 +12,20 @@ public class PlayerEffects : MonoBehaviour
     [SerializeField] ParticleSystem brakeSparks;
     [SerializeField] ParticleSystem hitBurst;
     [SerializeField] ParticleSystem debris;
+    [SerializeField] ParticleSystem doubleJumpSwirl;
 
     [Header("슬라이드·브레이크 (초당 개수)")]
     [SerializeField, Min(0f)] float dustRate = 30f;
     [SerializeField, Min(0f)] float sparkRate = 45f;
+
+    [Header("2단 점프 소용돌이 (발밑에서 도는 흰 입자)")]
+    [SerializeField, Min(0.01f)] float swirlTime = 0.3f;
+    [Tooltip("소용돌이가 도는 바퀴 수")]
+    [SerializeField, Min(0.1f)] float swirlTurns = 1.5f;
+    [SerializeField, Min(0.05f)] float swirlRadiusX = 0.5f;
+    [Tooltip("세로 반지름. 작을수록 납작한 원판으로 보인다")]
+    [SerializeField, Min(0.01f)] float swirlRadiusY = 0.15f;
+    [SerializeField, Min(1f)] float swirlRate = 110f;
 
     [Header("피격")]
     [SerializeField] SpriteRenderer witchSprite;
@@ -38,6 +48,7 @@ public class PlayerEffects : MonoBehaviour
     float dustAcc;
     float sparkAcc;
     bool hitStopping;
+    bool wasDoubleJumped;
 
     void Awake()
     {
@@ -75,6 +86,10 @@ public class PlayerEffects : MonoBehaviour
         var b = col.bounds;
         var feet = new Vector3(b.center.x - b.extents.x * 0.5f, b.min.y + 0.03f, 0f);
 
+        // 2단 점프를 쓴 순간(체공 중 처음 true가 될 때) 소용돌이를 시작한다
+        if (player.DoubleJumped && !wasDoubleJumped && doubleJumpSwirl != null) StartCoroutine(Swirl());
+        wasDoubleJumped = player.DoubleJumped;
+
         bool slideNow = running && player.Grounded && player.Sliding;
         bool brakeNow = running && player.Grounded && speed != null && speed.Braking;
 
@@ -108,6 +123,36 @@ public class PlayerEffects : MonoBehaviour
         if (ps == null) return;
         var p = new ParticleSystem.EmitParams { position = position, velocity = velocity };
         ps.Emit(p, 1);
+    }
+
+    // 마녀 발밑 타원 위를 돌며 입자를 내보낸다. 마녀가 오르는 동안 계속 내보내서 나선형 궤적이 남는다.
+    IEnumerator Swirl()
+    {
+        float elapsed = 0f;
+        float acc = 0f;
+        float angle = Mathf.PI;   // 왼쪽(뒤)에서 시작
+        float angularSpeed = swirlTurns * Mathf.PI * 2f / swirlTime;
+
+        while (elapsed < swirlTime)
+        {
+            float dt = Time.deltaTime;
+            elapsed += dt;
+            acc += swirlRate * dt;
+            var b = col.bounds;
+            var center = new Vector3(b.center.x, b.min.y + 0.1f, 0f);
+
+            while (acc >= 1f)
+            {
+                acc -= 1f;
+                // 한 프레임 안에서도 각도를 조금씩 나눠 끊기지 않게 한다
+                float a = angle + Random.value * angularSpeed * dt;
+                var offset = new Vector3(Mathf.Cos(a) * swirlRadiusX, Mathf.Sin(a) * swirlRadiusY, 0f);
+                var tangent = new Vector2(-Mathf.Sin(a) * swirlRadiusX, Mathf.Cos(a) * swirlRadiusY).normalized;
+                Emit(doubleJumpSwirl, center + offset, tangent * 0.8f);
+            }
+            angle += angularSpeed * dt;
+            yield return null;
+        }
     }
 
     void OnHazardBroken(Bounds bounds)

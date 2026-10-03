@@ -67,7 +67,7 @@
 
 ## 이펙트 (`PlayerEffects`, `Assets/Prefabs/Effects/`)
 
-- `Player` 프리팹 아래 `FX_Dust`(슬라이드 먼지), `FX_Spark`(브레이크 불꽃, 지상일 때만), `FX_Hit`(피격), `FX_Debris`(장애물 파괴 파편) 파티클을 두고 `PlayerEffects`가 위치·속도·양만 정해 Emit한다. 모양(크기·수명·색·중력)은 FX_* 프리팹에서 조정. 지금은 그림 없이 네모 점이고, 아티스트 스프라이트가 오면 FX 프리팹의 Renderer 머티리얼/Texture Sheet Animation에 연결한다.
+- `Player` 프리팹 아래 `FX_Dust`(슬라이드 먼지), `FX_Spark`(브레이크 불꽃, 지상일 때만), `FX_Hit`(피격), `FX_Debris`(장애물 파괴 파편), `FX_DoubleJump`(2단 점프 순간 발밑에서 도는 흰 입자, 수치는 `PlayerEffects`의 Swirl 항목) 파티클을 두고 `PlayerEffects`가 위치·속도·양만 정해 Emit한다. 모양(크기·수명·색·중력)은 FX_* 프리팹에서 조정. 지금은 그림 없이 네모 점이고, 아티스트 스프라이트가 오면 FX 프리팹의 Renderer 머티리얼/Texture Sheet Animation에 연결한다.
 - 마녀가 화면 고정이고 바닥이 스크롤되므로 월드 공간 파티클에 스크롤 속도만큼 왼쪽 속도를 더한다.
 - 피격: `RunManager.Died` 이벤트 → 파티클 + 흰색 번쩍임(`Plum/SpriteFlash` 셰이더, `Witch_Flash` 머티리얼) + 가로 카메라 흔들림 + 0.07초 정지. 파괴 파편은 `Hazard.Broken` 이벤트. 수치는 `PlayerEffects` Inspector. 소리도 같은 이벤트에 붙이면 된다.
 - 키 입력은 자동화로 안 들어가서 슬라이드 먼지 외에는 코드 경로로 직접 확인했다 (브레이크 입력 조건은 슬라이드와 같은 방식). **브레이크 불꽃과 전체 느낌은 직접 플레이로 확인이 필요하다.**
