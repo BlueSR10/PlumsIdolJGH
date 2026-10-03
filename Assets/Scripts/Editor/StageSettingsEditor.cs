@@ -9,6 +9,7 @@ public class StageSettingsEditor : Editor
     {
         DrawDefaultInspector();
         DrawBackgroundPicker();
+        DrawBgmPicker();
         DrawNextStagePicker();
 
         var s = (StageSettings)target;
@@ -80,6 +81,38 @@ public class StageSettingsEditor : Editor
             }
         }
         EditorGUILayout.HelpBox("배경은 Play할 때 나타납니다 (Prefab 모드에서는 보이지 않음).", MessageType.None);
+    }
+
+    // Assets/Audio/BGM 의 곡 목록에서 이 스테이지의 배경음악을 고른다. 새 곡을 폴더에 넣으면 자동으로 목록에 나온다.
+    void DrawBgmPicker()
+    {
+        const string folder = "Assets/Audio/BGM";
+        var names = new System.Collections.Generic.List<string> { "(없음)" };
+        var clips = new System.Collections.Generic.List<AudioClip> { null };
+        if (AssetDatabase.IsValidFolder(folder))
+        {
+            foreach (var guid in AssetDatabase.FindAssets("t:AudioClip", new[] { folder }))
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                names.Add(System.IO.Path.GetFileNameWithoutExtension(path));
+                clips.Add(AssetDatabase.LoadAssetAtPath<AudioClip>(path));
+            }
+        }
+
+        serializedObject.Update();
+        var prop = serializedObject.FindProperty("bgm");
+        int index = Mathf.Max(0, clips.IndexOf(prop.objectReferenceValue as AudioClip));
+
+        int picked = EditorGUILayout.Popup("배경음악 선택", index, names.ToArray());
+        if (picked != index)
+        {
+            prop.objectReferenceValue = clips[picked];
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        if (prop.objectReferenceValue != null && !clips.Contains(prop.objectReferenceValue as AudioClip))
+            EditorGUILayout.HelpBox($"'{prop.objectReferenceValue.name}'은(는) {folder} 밖의 곡입니다. 목록에서 다시 고르세요.", MessageType.Warning);
+        EditorGUILayout.HelpBox("배경음악은 Play할 때 재생됩니다. 다음 스테이지가 같은 곡이면 끊기지 않고 이어집니다.", MessageType.None);
     }
 
     // Build Settings에 등록된 씬 중에서 클리어 후 넘어갈 스테이지를 고른다. 없음 = 같은 스테이지를 다시 시작.

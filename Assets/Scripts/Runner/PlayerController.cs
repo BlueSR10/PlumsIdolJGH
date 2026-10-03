@@ -43,6 +43,9 @@ public class PlayerController : MonoBehaviour
     public bool Sliding => sliding;
     public bool DoubleJumped { get; private set; }   // 이번 체공에서 2단 점프를 썼는지 (애니메이션용)
 
+    // 점프를 시작한 순간 발생한다. 인자는 공중에서 쓴 2단 점프인지 여부 (소리용).
+    public event System.Action<bool> Jumped;
+
     void Awake()
     {
         input = GetComponent<RunnerInput>();
@@ -98,10 +101,12 @@ public class PlayerController : MonoBehaviour
             float height = jumpsUsed == 0 ? jumpHeight : airJumpHeight;
             float g = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
             rb.linearVelocity = new Vector2(0f, Mathf.Sqrt(2f * g * height));
-            if (jumpsUsed > 0) DoubleJumped = true;
+            bool airJump = jumpsUsed > 0;
+            if (airJump) DoubleJumped = true;
             jumpsUsed++;
             jumpBuffer = 0f;
             SetSliding(false);
+            Jumped?.Invoke(airJump);
             return;
         }
 

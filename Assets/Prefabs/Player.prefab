@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 5688255197304089927}
   - component: {fileID: 6021044395379664218}
   - component: {fileID: 3246929020646742462}
+  - component: {fileID: 6015140409520274908}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -352,6 +353,19 @@ MonoBehaviour:
   shakeAmount: 0.15
   hitBurstCount: 20
   debrisCount: 10
+--- !u!114 &6015140409520274908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4905463301342820822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60137aa579a2c5548819f2016ef27e5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSounds
+  brakeCooldown: 0.3
 --- !u!1001 &797243194359898751
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -36,6 +36,9 @@ public class RunManager : MonoBehaviour
     // 사망했을 때(장애물·추격자·추락 공통) 한 번 발생한다. 이펙트·소리가 구독한다.
     public static event System.Action Died;
 
+    // 골에 닿아 클리어했을 때 한 번 발생한다.
+    public static event System.Action Cleared;
+
     public State Current { get; private set; }
     public bool Transitioning { get; private set; }   // 클리어 후 어두워지는 중
     public bool HideHud => Transitioning || fadingIn;   // 전환 연출 중에는 HUD를 숨긴다
@@ -101,6 +104,7 @@ public class RunManager : MonoBehaviour
         if (Current != State.Running) return;
         Current = State.Cleared;
         stateTimer = clearDelay;
+        Cleared?.Invoke();
 
         // 다음 스테이지가 있으면 멈추지 않고 계속 달린 채로 어두워진다. 없으면 멈추고 같은 스테이지를 다시 시작한다.
         var settings = FindFirstObjectByType<StageSettings>();
