@@ -10,11 +10,14 @@ public class RunnerInput : MonoBehaviour
 
     InputAction ability;
 
-    public bool JumpPressed => jump.WasPressedThisFrame();
-    public bool JumpHeld => jump.IsPressed();
-    public bool SlideHeld => slide.IsPressed();
-    public bool BrakeHeld => brake.IsPressed();
-    public bool AbilityPressed => ability.WasPressedThisFrame();
+    // 연출·튜토리얼 대화 중(RunManager.Holding)에는 모든 입력을 막는다 (대화를 넘기는 Space가 점프로 새지 않게)
+    static bool Locked => RunManager.Instance != null && RunManager.Instance.Holding;
+
+    public bool JumpPressed => !Locked && jump.WasPressedThisFrame();
+    public bool JumpHeld => !Locked && jump.IsPressed();
+    public bool SlideHeld => !Locked && slide.IsPressed();
+    public bool BrakeHeld => !Locked && brake.IsPressed();
+    public bool AbilityPressed => !Locked && ability.WasPressedThisFrame();
 
     void Awake()
     {

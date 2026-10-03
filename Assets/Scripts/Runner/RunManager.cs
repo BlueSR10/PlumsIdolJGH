@@ -43,6 +43,9 @@ public class RunManager : MonoBehaviour
     // 골에 닿아 클리어했을 때 한 번 발생한다.
     public static event System.Action Cleared;
 
+    // 연출·튜토리얼 대화 중에 켠다: 마녀 입력을 막고(RunnerInput), 스테이지 시간·추락 판정·추격자 이동을 멈춘다.
+    public bool Holding { get; set; }
+
     public State Current { get; private set; }
     public bool Transitioning { get; private set; }   // 클리어 후 어두워지는 중
     public bool HideHud => Transitioning || fadingIn;   // 전환 연출 중에는 HUD를 숨긴다
@@ -58,6 +61,7 @@ public class RunManager : MonoBehaviour
         fade = gameObject.AddComponent<ScreenFade>();
         fade.Init(Camera.main, player.GetComponentInChildren<SpriteRenderer>());
         gameObject.AddComponent<GameOverHUD>();
+        gameObject.AddComponent<PauseMenu>();
 
         retry = new InputAction("Retry", InputActionType.Button);
         retry.AddBinding("<Keyboard>/space");
@@ -89,6 +93,8 @@ public class RunManager : MonoBehaviour
 
     void Update()
     {
+        if (Holding) return;
+
         if (Current == State.Running)
         {
             StageTime += Time.deltaTime;
@@ -121,16 +127,52 @@ public class RunManager : MonoBehaviour
         if (Current != State.Running) return;
         Current = State.Cleared;
         stateTimer = clearDelay;
+        Progress.MarkCleared(SceneManager.GetActiveScene().name);   // 진행 저장 (스테이지 목록의 잠금 해제)
         Cleared?.Invoke();
 
         // 다음 스테이지가 있으면 멈추지 않고 계속 달린 채로 어두워진다. 없으면 멈추고 같은 스테이지를 다시 시작한다.
+        // 맵에 다음 스테이지가 지정돼 있지 않아도 스테이지 목록(StageCatalog)의 스테이지면 목록 순서대로 이어진다(마지막은 엔딩).
         var settings = FindFirstObjectByType<StageSettings>();
-        if (settings != null && !string.IsNullOrEmpty(settings.nextStage))
+        string next = settings != null ? settings.nextStage : "";
+        if (string.IsNullOrEmpty(next)) next = NextInCatalog(SceneManager.GetActiveScene().name);
+
+        if (next == StageCatalog.EndingScene)
         {
-            StartCoroutine(TransitionTo(settings.nextStage));
+            StartCoroutine(GoToEnding());   // 어두워지지 않고 그대로 달린 채 엔딩으로
+            return;
+        }
+        if (!string.IsNullOrEmpty(next))
+        {
+            StartCoroutine(TransitionTo(next));
             return;
         }
         speed.Frozen = true;
+    }
+
+    // 스테이지 목록에서 이 씬 다음 스테이지 (마지막이면 엔딩, 목록 밖이거나 다음 씬이 아직 없으면 빈 문자열)
+    static string NextInCatalog(string sceneName)
+    {
+        int index = StageCatalog.IndexOf(sceneName);
+        if (index < 0) return "";
+        if (index == StageCatalog.Count - 1) return StageCatalog.EndingScene;
+        var next = StageCatalog.Scenes[index + 1];
+        return StageLoader.Exists(next) ? next : "";
+    }
+
+    // 마지막 스테이지 클리어: 화면을 어둡게 하지 않고 지금 속도 그대로 엔딩 씬으로 넘어가 계속 달린다
+    IEnumerator GoToEnding()
+    {
+        Transitioning = true;
+        EndingDirector.CarriedSpeed = speed.ScrollSpeed;
+        yield return null;
+        StageLoader.Load(StageCatalog.EndingScene);
+    }
+
+    // 일시정지 메뉴의 "다시 시작": 스테이지를 처음부터
+    public void RestartStage()
+    {
+        if (Transitioning) return;
+        Restart();
     }
 
     // 마녀만 남기고 어두워진 뒤 다음 스테이지 씬을 불러온다
@@ -141,7 +183,7 @@ public class RunManager : MonoBehaviour
         fade.LiftWitch(true);
         yield return fade.FadeTo(1f, fadeOutTime);
         yield return new WaitForSeconds(darkHoldTime);
-        fadeInPending = true;
+        fadeInPending = sceneName.StartsWith("Stage_");   // 스테이지 선택 같은 메뉴 씬으로 갈 때는 다음 스테이지의 페이드인을 예약하지 않는다
         StageLoader.Load(sceneName);
     }
 

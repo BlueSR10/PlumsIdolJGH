@@ -7,6 +7,15 @@ using UnityEngine.SceneManagement;
 // 빌드할 때는 StageBuildSync가 Stage_* 씬을 모두 등록한다.
 public static class StageLoader
 {
+    // 불러올 수 있는 씬인가 (에디터에서는 Assets에 있으면, 빌드에서는 Build Settings에 있으면)
+    public static bool Exists(string sceneName)
+    {
+#if UNITY_EDITOR
+        if (FindScenePath(sceneName) != null) return true;
+#endif
+        return Application.CanStreamedLevelBeLoaded(sceneName);
+    }
+
     public static void Load(string sceneName)
     {
 #if UNITY_EDITOR

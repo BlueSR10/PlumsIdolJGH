@@ -30,6 +30,13 @@ public class CookieHop : MonoBehaviour
     // 지금 뛰어오른 높이 (Chaser가 몸통 상자를 바닥에 두려고 읽는다)
     public float Offset => offset;
 
+    // 쉬는 시간 범위를 바꾼다 (엔딩처럼 짧은 장면에서 더 자주 뛰게). 다음 점프까지의 대기도 새로 정한다.
+    public void SetInterval(Vector2 range)
+    {
+        interval = range;
+        wait = NextWait();
+    }
+
     void Awake()
     {
         baseY = transform.localPosition.y;

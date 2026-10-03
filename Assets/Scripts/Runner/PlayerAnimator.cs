@@ -64,5 +64,6 @@ public class PlayerAnimator : MonoBehaviour
         animator.speed = target == Run && speed != null
             ? Mathf.Clamp(speed.ScrollSpeed / runSpeedReference, 0.5f, 2f)
             : 1f;
+        if (target == Run && run != null && run.Holding) animator.speed = 0f;   // 시작 연출 중에는 달리는 자세로 멈춰 서 있는다
     }
 }

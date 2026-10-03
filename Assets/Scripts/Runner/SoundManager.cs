@@ -129,6 +129,26 @@ public class SoundManager : MonoBehaviour
 
     static SoundManager instance;
 
+    // 설정 화면의 볼륨(0~1, PlayerPrefs에 저장). 프리팹의 sfxVolume/bgmVolume에 곱해져서 최종 음량이 된다.
+    const string SfxKey = "plum.sfxVolume";
+    const string BgmKey = "plum.bgmVolume";
+    static float userSfx = -1f, userBgm = -1f;
+
+    public static float UserSfx
+    {
+        get { if (userSfx < 0f) userSfx = PlayerPrefs.GetFloat(SfxKey, 1f); return userSfx; }
+        set { userSfx = Mathf.Clamp01(value); PlayerPrefs.SetFloat(SfxKey, userSfx); }
+    }
+
+    public static float UserBgm
+    {
+        get { if (userBgm < 0f) userBgm = PlayerPrefs.GetFloat(BgmKey, 1f); return userBgm; }
+        set { userBgm = Mathf.Clamp01(value); PlayerPrefs.SetFloat(BgmKey, userBgm); }
+    }
+
+    float Sfx => sfxVolume * UserSfx;
+    float BgmVol => bgmVolume * UserBgm;
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Create()
     {
@@ -179,6 +199,20 @@ public class SoundManager : MonoBehaviour
     {
         if (instance != null) instance.PlayOneShot(id);
     }
+
+    // 설정 화면에서 효과음 볼륨을 바꿀 때 들려주는 미리듣기. 일시정지 중에도 들린다.
+    public static void PreviewSfx(Sound id)
+    {
+        if (instance == null || !instance.table.TryGetValue(id, out var e)) return;
+        if (instance.previewSource == null)
+        {
+            instance.previewSource = instance.NewSource();
+            instance.previewSource.ignoreListenerPause = true;
+        }
+        instance.previewSource.PlayOneShot(e.clip, e.volume * instance.Sfx);
+    }
+
+    AudioSource previewSource;
 
     // 반복 소리의 목표 크기(0~1)와 피치. 0보다 크면 켜지고 0이면 서서히 꺼진다. 매 프레임 불러도 된다.
     public static void SetLoop(Sound id, float target, float pitch = 1f)
@@ -263,7 +297,7 @@ public class SoundManager : MonoBehaviour
         s.clip = e.clip;
         s.loop = false;
         s.pitch = pitch;
-        v.baseVolume = e.volume * sfxVolume;
+        v.baseVolume = e.volume * Sfx;
         s.volume = v.baseVolume;
         if (e.delay > 0f) s.PlayDelayed(e.delay);
         else s.Play();
@@ -472,7 +506,7 @@ public class SoundManager : MonoBehaviour
 
     void ApplyFaders(Sustain s, float dt)
     {
-        float baseVol = s.entry.volume * sfxVolume;
+        float baseVol = s.entry.volume * Sfx;
         foreach (var f in new[] { s.introFade, s.bodyFade, s.outroFade })
         {
             if (f == null) continue;
@@ -502,6 +536,7 @@ public class SoundManager : MonoBehaviour
         if (clip == null) return;
 
         var s = NewSource();
+        s.ignoreListenerPause = true;   // 일시정지·튜토리얼 대화 중에도 배경음악은 이어진다 (효과음 루프만 멈춘다)
         s.clip = clip;
         s.loop = true;
         s.volume = 0f;
@@ -536,7 +571,7 @@ public class SoundManager : MonoBehaviour
             loop.level = Mathf.MoveTowards(loop.level, loop.target, dt / loopFadeTime);
             if (loop.level > 0f && !loop.source.isPlaying) loop.source.Play();
             else if (loop.level <= 0f && loop.source.isPlaying) loop.source.Stop();
-            loop.source.volume = loop.level * table[kv.Key].volume * sfxVolume;
+            loop.source.volume = loop.level * table[kv.Key].volume * Sfx;
             loop.source.pitch = loop.pitch;
         }
 
@@ -549,7 +584,7 @@ public class SoundManager : MonoBehaviour
         {
             var t = bgmTracks[i];
             t.level = Mathf.MoveTowards(t.level, t.target, dt / bgmFadeTime);
-            t.source.volume = t.level * bgmStageVolume * bgmVolume * bgmPauseLevel;
+            t.source.volume = t.level * bgmStageVolume * BgmVol * bgmPauseLevel;
             if (bgmPaused && bgmPauseLevel <= 0f && t.source.isPlaying) t.source.Pause();
             if (t.target <= 0f && t.level <= 0f)
             {

@@ -115,7 +115,7 @@ public class ProjectileSound : MonoBehaviour
         }
 
         level = Mathf.MoveTowards(level, active && running ? 1f : 0f, dt / fadeTime);
-        src.volume = baseVolume * level;
+        src.volume = baseVolume * level * SoundManager.UserSfx;
         if (level > 0f && !src.isPlaying) src.Play();
         else if (level <= 0f && src.isPlaying) src.Stop();
 
