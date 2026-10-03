@@ -122,6 +122,9 @@ public class StageSettingsEditor : Editor
     {
         var names = new System.Collections.Generic.List<string> { "(없음 - 같은 스테이지 반복)" };
         foreach (var name in StageBuildSync.StageSceneNames()) names.Add(name);
+        // 마지막 스테이지는 엔딩으로, 튜토리얼은 스테이지 선택으로 간다 (목록에 없으면 Inspector가 값을 지워 버린다)
+        names.Add(StageCatalog.EndingScene);
+        names.Add(StageCatalog.StageSelectScene);
 
         serializedObject.Update();
         var prop = serializedObject.FindProperty("nextStage");

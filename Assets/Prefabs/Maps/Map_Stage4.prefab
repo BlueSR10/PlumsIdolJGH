@@ -250,8 +250,8 @@ MonoBehaviour:
   chaserSpeed: 5.8
   chaserStartGap: 7
   background: BG_Kitchen
-  nextStage: 
-  bgm: {fileID: 0}
+  nextStage: Stage_Stage5
+  bgm: {fileID: 8300000, guid: 609ccfff53b6c044689b5b03e17108ae, type: 3}
   bgmVolume: 0.6
 --- !u!1 &3051528972757527006
 GameObject:

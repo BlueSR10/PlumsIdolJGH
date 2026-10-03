@@ -128,7 +128,7 @@ MonoBehaviour:
   chaserSpeed: 4.5
   chaserStartGap: 8
   background: 
-  nextStage: 
+  nextStage: Ending
   bgm: {fileID: 0}
   bgmVolume: 0.6
 --- !u!1001 &82218297076100962

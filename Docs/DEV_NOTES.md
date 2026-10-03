@@ -10,7 +10,7 @@
 - **직접 플레이로 확인이 필요한 것**(자동화로는 못 봄): 브레이크 모션, 충돌 크기(`ArtPiece`·`Chaser` 몸통 상자 추정치), 추격 난이도, 슬라이드 소리의 구간 반복·앞부분 자르기, 투사체 도플러 정도, 점프음을 잘라 쓰는 것, 사망 Game Over 문구 위치·크기, 쿠키 점프 빈도·앞뒤 움직임, 쿠키 위로 점프했을 때 아래에서 기다리다 잡히는 느낌. 사용자가 플레이하며 확인·튜닝 중이다.
 - **자동화 환경의 한계**: 키 입력이 거의 안 들어가고(세션 첫 입력만 가끔) 에디터 일시정지 상태에서는 오디오 재생 상태와 실시간 대기(hit-stop의 `timeScale 0`이 안 풀림)가 정상이 아니다. 그래서 `EditorApplication.Step()` 반복, 리플렉션으로 상태 읽기, 카메라를 PNG로 렌더링(`Camera.Render` → `ReadPixels`, IMGUI는 안 찍힘)으로 확인했다. 첫 `eval`은 플레이 진입 직후 400 오류가 자주 나니 한 번 더 부른다.
 - 튜닝 위치: 점프·중력·슬라이드는 `Player` 프리팹의 `PlayerController`, 감속은 `StageRig`의 `SpeedController`, 시작 속도·가속·추격자 속도·시작 거리·배경음악은 맵의 `StageSettings`, 추격자 몸통 상자는 `Chaser` 프리팹(Body Half Width/Height), 쿠키 점프·움직임은 `CookieHop`·`CookieJostle`, 이펙트는 `PlayerEffects`와 `Assets/Prefabs/Effects/FX_*`, 소리는 `Assets/Resources/SoundManager.prefab`(플레이 중 바꾼 값은 정지하면 사라지니 정지 후 프리팹에 반영).
-- **레벨 디자인 때 쓸 것**: 팔레트(`Assets/Prefabs/Palette/`)의 일반 조각(Spike, Bar, Block, Gate, 아이템, Goal, Bird)과 단계별 조각 `S1_`(집 밖)·`S2_`(주방)·`S3_`(오븐), 바닥 `S?_Ground`, 발판 `S1_Platform`·`S2_Shelf`·`S3_Platform`. 배경은 스테이지 설정의 팝업, 배경음악도 같은 Inspector의 팝업(`Assets/Audio/BGM` 5곡, **어느 맵에도 아직 곡을 지정하지 않음**, 사용자가 고른다). 스테이지 이어 붙이기는 "다음 스테이지" 팝업이고 **Build Settings 등록은 필요 없다**(목록은 `Assets/Scenes`의 `Stage_*` 전부, 빌드 때 `StageBuildSync`가 등록; 씬 이름을 바꾸면 앞 스테이지의 "다음 스테이지"를 다시 골라야 함). 테스트 예시 씬 `Stage_Art_1→2→3`. 사용법은 `MAP_GUIDE.md`. 맵 검증은 `StageSettings` Inspector. 새 투사체(날아오는 장애물)는 `ProjectileSound` 컴포넌트를 붙인다.
+- **레벨 디자인 때 쓸 것**: 팔레트(`Assets/Prefabs/Palette/`)의 일반 조각(Spike, Bar, Block, Gate, 아이템, Goal, Bird)과 단계별 조각 `S1_`(집 밖)·`S2_`(주방)·`S3_`(오븐), 바닥 `S?_Ground`, 발판 `S1_Platform`·`S2_Shelf`·`S3_Platform`. 배경은 스테이지 설정의 팝업, 배경음악도 같은 Inspector의 팝업(`Assets/Audio/BGM` 5곡, 곡 지정 현황은 "스테이지 BGM·연결" 참고). 스테이지 이어 붙이기는 "다음 스테이지" 팝업이고 **Build Settings 등록은 필요 없다**(목록은 `Assets/Scenes`의 `Stage_*` 전부, 빌드 때 `StageBuildSync`가 등록; 씬 이름을 바꾸면 앞 스테이지의 "다음 스테이지"를 다시 골라야 함). 테스트 예시 씬 `Stage_Art_1→2→3`. 사용법은 `MAP_GUIDE.md`. 맵 검증은 `StageSettings` Inspector. 새 투사체(날아오는 장애물)는 `ProjectileSound` 컴포넌트를 붙인다.
 - **팀원 기믹 제작 규칙**: `MAP_GUIDE.md` 9장 (인스턴스 수정 → Prefab Variant → 스크립트 순, 폴더 소유권 `Assets/Scripts/Gimmicks/이름/`, `Assets/Prefabs/Gimmicks/이름/`). 팀원 폴더 `상연`(새 기믹 `SyAmbushBird`, `SyArrivalGate`, `SyBrakePenalty`, `SyFeintHazard`, `SySlowBird`), `은호`, `강현`. 공용 부모 클래스(`GimmickBehaviour`)와 폴더별 asmdef는 아직 없다. 팀원 기믹에는 아직 소리·이펙트 연결이 없다(`SyBrakePenalty` 등).
 - 스크립트: `Assets/Scripts/Runner/`(에디터 도구는 `Assets/Scripts/Editor/`). 씬: `Stage_Gimmicks`(전체 이어 붙임), `Stage_Test_Block/Giant/Small/Boost/Bird`, `Stage_Art_1/2/3`, 팀원 `Stage_Stage11`, `Stage_state12`. `.slnx`는 IDE 생성 파일이라 커밋 제외.
 - **소리가 아직 없는 것**: 착지, Gate 신호음, 변신 종료 경고음, 비행 시작음, 스테이지 전환음, 튜토리얼 대화창 넘김음, UI. 에셋이 오면 `Sound` enum 맨 아래에 추가하고 SoundManager 프리팹에 클립을 꽂고 훅(`PlayerSounds` 등)에서 `SoundManager.Play`를 부른다.
@@ -78,6 +78,13 @@
 - 글꼴은 `Assets/Resources/MenuStyle.asset`(Font 필드) 하나로 모든 메뉴·대화창이 쓴다. 각 화면 컴포넌트의 Font 필드는 따로 지정할 때만.
 - 확인한 것: 튜토리얼에서 열기/계속하기/다시 시작 상태 전환, 메뉴·설정 화면 렌더링, 튜토리얼 클리어 → 어두워짐 → 이동. **직접 확인 필요**: Esc·방향키·마우스 입력과 슬라이더 조작, BGM 볼륨 변화가 들리는지.
 
+## 스테이지 BGM·연결 (2026-10-04 기준, 씬에서 맵 프리팹 값을 덮어쓴 곳이 있으니 **씬의 값이 우선**)
+
+- 튜토리얼: BGM `silly-escapades`, 다음 `StageSelect`. 1: `silly-escapades`→`Stage_Stage2`. 2: `silly-escapades`→`Stage_Stage3`. 3: `halloween-background`→`Stage_Stage4`. 4: `halloween-background`→`Stage_Stage5`. 5: `g-chase`→`Stage_Stage6`. 6: `haunted-guitar`→`Ending`. 같은 곡이 이어지면 끊기지 않는다. 배경은 팀원이 정한 대로(1·2 산, 3·4 주방, 5·6 오븐).
+- 팀원이 씬에서 정한 값(1·2·5의 BGM·다음, 3의 배경, 6의 BGM)은 그대로 두고, 비어 있던 3·4의 BGM(프리팹 `Map_Stage3/4`)·다음, 6의 다음(`Map_Stage6`)만 프로그래머가 채웠다. 곡을 바꾸려면 해당 씬의 맵 인스턴스 Inspector(없으면 프리팹)에서 고른다.
+- `StageSettingsEditor`의 다음 스테이지 팝업에 `Ending`, `StageSelect`를 추가했다(목록에 없으면 Inspector를 열 때 값이 지워지던 문제).
+- `StageCatalog`의 3·4·5번이 이제 COMING SOON이 아니라 실제 씬(`Stage_Stage3~5`)이다.
+
 ## 엔딩 (`Assets/Scripts/Ending/`, 씬 `Ending`, 맵 `Map_Ending`)
 
 - **진입**: `RunManager.Clear`가 다음 스테이지를 정한다. 맵의 `nextStage`가 있으면 그것, 비었고 스테이지 목록(`StageCatalog`)의 스테이지면 **목록 순서의 다음 씬**(씬이 아직 없으면 같은 스테이지 반복), **마지막(Stage_Stage6)이면 `Ending`**. 엔딩으로 갈 때만 어두워지지 않고(`GoToEnding`) 클리어 때의 스크롤 속도(`EndingDirector.CarriedSpeed`)로 그대로 넘어가 계속 달린다(오븐 배경은 처음 위치부터 다시 흐름). 다른 스테이지로의 이동은 기존대로 어두워졌다 밝아진다.
@@ -124,7 +131,7 @@
 - 연결(`PlayerSounds`, Player 프리팹): 점프 `jump`(앞 0.6초만, 끝 0.25초 페이드), 2단 점프는 같은 `jump`를 피치 1.25·0.5초, 브레이크 `brake`(`SpeedController.Braking`이 켜질 때 한 번, 0.3초 안에 재발동 없음), 아이템 `item`(`ItemPickup.Picked`), 사망은 `colision` 즉시 + `fail` 0.3초 뒤에 겹침(`RunManager.Died`, 장애물·추격자·추락 공통), 클리어 `Goal_in`(`RunManager.Cleared`), 비행 `broom_fly` 루프(비행 중, 5초 비행이라 반복되지 않음), 추격자 발소리 `cookies_run` 루프(`Chaser.Proximity`에 비례해 커짐, 사망·클리어 중 꺼짐). 점프음이 1.8초로 길어 임시로 잘라 쓰고 있으니 팀원이 짧게 다시 주면 Max Length를 0으로 돌린다.
 - 슬라이드 `sliding`(`SoundManager.SetHold`): 키를 누르는 동안 이어진다. 클립을 인트로(1.0~1.5초, 한 번; 서서히 커지는 맨 앞 1.0초는 `Trim Start`로 잘라 누르자마자 소리가 나게 함) / 반복(1.5~2.9초, 이음새 0.1초 겹침) / 아웃트로(2.9초~끝, 떼면 한 번)로 런타임에 잘라 샘플 단위로 이어 붙인다. 구간은 프리팹 Sounds 목록의 Slide 항목 `Loop Start`/`Loop End`/`Crossfade`로 조정(다른 소리도 같은 필드로 쓸 수 있음, 클립 임포트는 Decompress On Load). 인트로 도중에 떼면 짧게 페이드아웃만, 사망하면 아웃트로 없이 바로 끈다. 달리기 발소리 `witch_run`: 땅에서 달릴 때만 루프(슬라이드·브레이크·공중·비행·사망 중 꺼짐), 스크롤 속도에 따라 피치 0.8~1.5.
 - 투사체(날아오는 장애물)는 모두 `wind`(`ProjectileSound`): 위치에 따라 좌우로 들리고(3D, 가까울수록 크게) 직접 계산한 도플러(다가올 때 높고 지나가면 낮음, `SoundManager`의 Doppler Speed 30이 작을수록 변화가 큼). `FlyingHazard`는 코드가 알아서 붙이고(Bird 변형 전부), 그 밖의 투사체(`SyAmbushBird`, `SySlowBird`는 `Stage_Stage11` 씬에 붙여 둠)는 컴포넌트만 붙이면 움직이기 시작할 때 소리가 난다. 새 투사체를 만들면 `ProjectileSound`를 붙인다(MAP_GUIDE 9장).
-- 배경음악: `StageSettings`의 **배경음악 선택** 팝업(`Assets/Audio/BGM`의 곡)과 **Bgm Volume**. 같은 곡이면 스테이지가 바뀌어도 이어지고 다른 곡이면 1초 동안 서서히 바뀐다. BGM mp3는 용량이 커서 임포트를 Streaming으로 바꿨다. 어느 맵에도 아직 곡을 지정하지 않았다(사용자가 고른다).
+- 배경음악: `StageSettings`의 **배경음악 선택** 팝업(`Assets/Audio/BGM`의 곡)과 **Bgm Volume**. 같은 곡이면 스테이지가 바뀌어도 이어지고 다른 곡이면 1초 동안 서서히 바뀐다. BGM mp3는 용량이 커서 임포트를 Streaming으로 바꿨다. 곡 지정 현황은 "스테이지 BGM·연결" 참고.
 - 자동화 환경에서는 실시간 재생이 안 돼서 이벤트 연결·재생 시작·BGM 중복 방지만 확인했고, 실제 들리는 느낌과 페이드·루프 타이밍은 직접 플레이로 확인이 필요하다.
 
 ## 기술 규약

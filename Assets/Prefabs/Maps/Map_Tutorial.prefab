@@ -86,7 +86,7 @@ MonoBehaviour:
   chaserStartGap: 8
   background: BG_Mountain
   nextStage: StageSelect
-  bgm: {fileID: 0}
+  bgm: {fileID: 8300000, guid: 41033ecf7cc246449ad2a441a4bdee65, type: 3}
   bgmVolume: 0.6
 --- !u!114 &4502863840076287442
 MonoBehaviour:

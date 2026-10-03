@@ -116,6 +116,7 @@ MonoBehaviour:
   lanes: 4
   floorY: -0.13
   safeLane: 2
+  markedLaneIsDanger: 0
   warnTime: 1.2
   blinkInterval: 0.15
   fill: 0.5
@@ -195,8 +196,8 @@ MonoBehaviour:
   chaserSpeed: 4.5
   chaserStartGap: 8
   background: 
-  nextStage: 
-  bgm: {fileID: 0}
+  nextStage: Stage_Stage4
+  bgm: {fileID: 8300000, guid: 609ccfff53b6c044689b5b03e17108ae, type: 3}
   bgmVolume: 0.6
 --- !u!1 &5074419442000887552
 GameObject:
