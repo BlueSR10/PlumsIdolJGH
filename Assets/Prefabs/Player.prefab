@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 327703313597546289}
   - component: {fileID: 952134674473859553}
+  - component: {fileID: 1342045011190161082}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -81,8 +82,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 75d8729c0c9bbef4eb4d0f4870fa583d, type: 3}
-  m_Color: {r: 0.3, g: 0.6, b: 1, a: 1}
+  m_Sprite: {fileID: -1109362456021799100, guid: c73e1277a55fe3041b16f02967c73459, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -91,6 +92,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!95 &1342045011190161082
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3083037114577426526}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: dd248eb38d63a6741ba7f5781154e116, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4905463301342820822
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,6 +129,7 @@ GameObject:
   - component: {fileID: 5589051805970566811}
   - component: {fileID: 6535711202334079854}
   - component: {fileID: 5688255197304089927}
+  - component: {fileID: 6021044395379664218}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -249,7 +273,7 @@ MonoBehaviour:
   verticalSpeed: 4.5
   maxHeight: 3
   visual: {fileID: 952134674473859553}
-  flightColor: {r: 0.8, g: 0.5, b: 1, a: 1}
+  flightColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &5688255197304089927
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,3 +288,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerForm
   giantScale: 2
   smallScale: 0.4
+--- !u!114 &6021044395379664218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4905463301342820822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6f02ae09815bc4f859589bb9614155, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimator
+  animator: {fileID: 1342045011190161082}
+  landTime: 0.08
+  runSpeedReference: 4

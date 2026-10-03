@@ -8,6 +8,7 @@ public class StageSettingsEditor : Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
+        DrawBackgroundPicker();
 
         var s = (StageSettings)target;
         EditorGUILayout.Space();
@@ -34,6 +35,50 @@ public class StageSettingsEditor : Editor
 
         if (!HasGroundAt(s, StageSettings.PlayerStartX))
             EditorGUILayout.HelpBox($"시작 위치(x={StageSettings.PlayerStartX})에 바닥이 없습니다. 플레이어가 떨어집니다.", MessageType.Error);
+    }
+
+    // Assets/Resources/Backgrounds/ 의 프리팹 목록에서 배경을 고른다. 새 배경 프리팹을 넣으면 자동으로 목록에 나온다.
+    void DrawBackgroundPicker()
+    {
+        const string folder = "Assets/Resources/Backgrounds";
+        var names = new System.Collections.Generic.List<string> { "(없음)" };
+        if (AssetDatabase.IsValidFolder(folder))
+        {
+            foreach (var guid in AssetDatabase.FindAssets("t:GameObject", new[] { folder }))
+                names.Add(System.IO.Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(guid)));
+        }
+
+        serializedObject.Update();
+        var prop = serializedObject.FindProperty("background");
+        int index = Mathf.Max(0, names.IndexOf(prop.stringValue));
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("배경", EditorStyles.boldLabel);
+        int picked = EditorGUILayout.Popup("배경 선택", index, names.ToArray());
+        if (picked != index || (picked == 0 && !string.IsNullOrEmpty(prop.stringValue)))
+        {
+            prop.stringValue = picked == 0 ? "" : names[picked];
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        if (!string.IsNullOrEmpty(prop.stringValue) && !names.Contains(prop.stringValue))
+            EditorGUILayout.HelpBox($"'{prop.stringValue}' 배경을 찾을 수 없습니다. 다시 고르세요.", MessageType.Warning);
+
+        if (picked > 0)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{folder}/{names[picked]}.prefab");
+            var preview = prefab != null ? AssetPreview.GetAssetPreview(prefab) : null;
+            if (preview != null)
+            {
+                var rect = GUILayoutUtility.GetRect(1f, 120f, GUILayout.ExpandWidth(true));
+                GUI.DrawTexture(rect, preview, ScaleMode.ScaleToFit);
+            }
+            else if (AssetPreview.IsLoadingAssetPreview(prefab.GetInstanceID()))
+            {
+                Repaint();
+            }
+        }
+        EditorGUILayout.HelpBox("배경은 Play할 때 나타납니다 (Prefab 모드에서는 보이지 않음).", MessageType.None);
     }
 
     static bool HasGroundAt(StageSettings s, float localX)

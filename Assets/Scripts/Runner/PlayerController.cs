@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviour
 
     public bool Grounded { get; private set; }
     public bool Flying => flight != null && flight.Active;
+    public bool Sliding => sliding;
+    public bool DoubleJumped { get; private set; }   // 이번 체공에서 2단 점프를 썼는지 (애니메이션용)
 
     void Awake()
     {
@@ -73,7 +75,11 @@ public class PlayerController : MonoBehaviour
         Grounded = col.IsTouching(groundFilter);
         if (Flying) return;   // 비행 중 이동은 WitchFlight가 담당
 
-        if (Grounded && rb.linearVelocity.y <= 0.1f) jumpsUsed = 0;
+        if (Grounded && rb.linearVelocity.y <= 0.1f)
+        {
+            jumpsUsed = 0;
+            DoubleJumped = false;
+        }
         else if (!Grounded && jumpsUsed == 0) jumpsUsed = 1;   // 점프 없이 공중에 뜬 경우 1회 소모
 
         if (jumpBuffer > 0f && jumpsUsed < maxJumps)
@@ -81,6 +87,7 @@ public class PlayerController : MonoBehaviour
             float height = jumpsUsed == 0 ? jumpHeight : airJumpHeight;
             float g = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
             rb.linearVelocity = new Vector2(0f, Mathf.Sqrt(2f * g * height));
+            if (jumpsUsed > 0) DoubleJumped = true;
             jumpsUsed++;
             jumpBuffer = 0f;
             SetSliding(false);
@@ -104,7 +111,8 @@ public class PlayerController : MonoBehaviour
         ApplyShape();
     }
 
-    // 배율과 슬라이드 상태를 합쳐 콜라이더와 스프라이트 크기를 정한다.
+    // 배율과 슬라이드 상태를 합쳐 콜라이더 크기를, 배율로 스프라이트 크기를 정한다.
+    // 슬라이드 자세는 슬라이드 애니메이션이 직접 그리므로 스프라이트는 눌러서 늘리지 않는다.
     void ApplyShape()
     {
         float sx = sizeScale;
@@ -114,8 +122,8 @@ public class PlayerController : MonoBehaviour
 
         col.size = size;
         col.offset = new Vector2(standOffset.x, bottom + size.y * 0.5f);
-        visual.localScale = new Vector3(visualScale.x * sx, visualScale.y * sy, visualScale.z);
-        visual.localPosition = new Vector3(visualPos.x, visualPos.y + (sy - 1f) * visualHalfHeight, visualPos.z);
+        visual.localScale = new Vector3(visualScale.x * sizeScale, visualScale.y * sizeScale, visualScale.z);
+        visual.localPosition = new Vector3(visualPos.x, visualPos.y + (sizeScale - 1f) * visualHalfHeight, visualPos.z);
     }
 
     // 비행 시작/종료 (WitchFlight가 호출). 비행 중에는 중력을 끄고 점프·슬라이드를 막는다.
@@ -143,6 +151,7 @@ public class PlayerController : MonoBehaviour
         transform.position = spawnPosition;
         jumpBuffer = 0f;
         jumpsUsed = 0;
+        DoubleJumped = false;
         SetSliding(false);
     }
 
