@@ -9,6 +9,7 @@ public class Chaser : MonoBehaviour
     [SerializeField] float catchDistance = 1.25f;   // 중심 간 거리가 이 이하이면 사망
     [SerializeField] float warningDistance = 5f;    // 이 거리 안으로 들어오면 Proximity가 0보다 커진다 (발소리용)
 
+    Animator animator;
     float localX;
 
     public float StartGap => startGap;
@@ -28,6 +29,18 @@ public class Chaser : MonoBehaviour
     {
         localX = x;
         Place();
+    }
+
+    void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        // 쫓아오지 않을 때(사망·클리어)는 달리기 모션도 멈춘다
+        var run = RunManager.Instance;
+        if (animator != null) animator.speed = run != null && run.Current == RunManager.State.Running ? 1f : 0f;
     }
 
     void FixedUpdate()
