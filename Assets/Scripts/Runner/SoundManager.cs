@@ -39,7 +39,9 @@ public class SoundManager : MonoBehaviour
         [Tooltip("maxLength로 자를 때 끝에서 서서히 줄이는 시간(초)")]
         [Min(0f)] public float fadeOut = 0.15f;
 
-        [Header("누르는 동안 이어지는 소리 (Slide 등, 둘 다 0이면 쓰지 않음)")]
+        [Header("누르는 동안 이어지는 소리 (Slide 등, Loop Start/End가 0이면 쓰지 않음)")]
+        [Tooltip("클립의 맨 앞 이 시간(초)을 잘라 낸다. 서서히 커지는 도입부를 건너뛰어 누르자마자 소리가 나게 할 때 쓴다")]
+        [Min(0f)] public float trimStart;
         [Tooltip("여기까지(초)는 앞부분으로 한 번만 재생한다")]
         [Min(0f)] public float loopStart;
         [Tooltip("loopStart ~ 여기까지(초)를 반복한다. 떼면 여기부터 끝까지(뒷부분)를 한 번 재생한다")]
@@ -349,7 +351,10 @@ public class SoundManager : MonoBehaviour
             int xf = Mathf.Min(Mathf.RoundToInt(e.crossfade * freq), a, (b - a) / 2);
             int len = b - a;
 
-            s.intro = Slice(clip.name + "_intro", data, 0, a, ch, freq);
+            // 앞부분: trimStart부터 반복 시작까지. 잘라 낸 자리에서 소리가 튀지 않게 맨 앞을 아주 짧게 키운다
+            int t = Mathf.Clamp(Mathf.RoundToInt(e.trimStart * freq), 0, a - 1);
+            s.intro = Slice(clip.name + "_intro", data, t, a - t, ch, freq);
+            if (t > 0) FadeIn(s.intro, Mathf.RoundToInt(0.02f * freq), ch);
             if (total - b > 0) s.outro = Slice(clip.name + "_outro", data, b, total - b, ch, freq);
 
             // 반복 구간: [a, b)를 복사하고, 끝 xf 샘플은 '구간 끝 → 구간 시작 직전'으로 서서히 넘어가게 섞는다
@@ -373,6 +378,21 @@ public class SoundManager : MonoBehaviour
         s.bodyFade = new Fader { source = NewSource() };
         s.outroFade = new Fader { source = NewSource() };
         s.bodyFade.source.loop = true;
+    }
+
+    // 클립 맨 앞 samples개를 0에서 원래 크기까지 서서히 키운다
+    static void FadeIn(AudioClip clip, int samples, int ch)
+    {
+        samples = Mathf.Min(samples, clip.samples);
+        if (samples <= 0) return;
+        var d = new float[samples * ch];
+        clip.GetData(d, 0);
+        for (int i = 0; i < samples; i++)
+        {
+            float w = (i + 1f) / samples;
+            for (int c = 0; c < ch; c++) d[i * ch + c] *= w;
+        }
+        clip.SetData(d, 0);
     }
 
     static AudioClip Slice(string name, float[] data, int start, int count, int ch, int freq)

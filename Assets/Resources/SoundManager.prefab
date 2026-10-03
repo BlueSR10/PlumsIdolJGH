@@ -52,6 +52,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0.6
     fadeOut: 0.25
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -62,6 +63,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0.5
     fadeOut: 0.2
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -72,6 +74,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -82,6 +85,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -92,6 +96,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -102,6 +107,7 @@ MonoBehaviour:
     delay: 0.3
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -112,6 +118,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -122,6 +129,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -132,6 +140,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -142,6 +151,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0.15
+    trimStart: 1
     loopStart: 1.5
     loopEnd: 2.9
     crossfade: 0.1
@@ -152,6 +162,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0.15
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
@@ -162,6 +173,7 @@ MonoBehaviour:
     delay: 0
     maxLength: 0
     fadeOut: 0.15
+    trimStart: 0
     loopStart: 0
     loopEnd: 0
     crossfade: 0.1
