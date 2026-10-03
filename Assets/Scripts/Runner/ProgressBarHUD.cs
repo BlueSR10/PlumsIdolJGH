@@ -10,7 +10,7 @@ public class ProgressBarHUD : MonoBehaviour
     void OnGUI()
     {
         var run = RunManager.Instance;
-        if (run == null) return;
+        if (run == null || run.HideHud) return;
 
         float w = Screen.width * 0.6f;
         float x0 = (Screen.width - w) * 0.5f;

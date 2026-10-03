@@ -9,11 +9,23 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/TestStage.unity
-    guid: 35df4e61896763043bb6468855c08b0f
+    path: Assets/Scenes/Stage_Test_Bird.unity
+    guid: 605214ddc285cef4b8aaa417c6e3b2cc
   - enabled: 1
-    path: Assets/Scenes/TestStage_Speed.unity
-    guid: c20efe0d569ee3d408a7c077731a613e
+    path: Assets/Scenes/Stage_Test_Block.unity
+    guid: e24feb33235428642a1d39b16859d723
+  - enabled: 1
+    path: Assets/Scenes/Stage_Test_Giant.unity
+    guid: 1bc99596d62f383468670fc7702d8b9b
+  - enabled: 1
+    path: Assets/Scenes/Stage_Test_Small.unity
+    guid: 2654878300b16714a8d563855e5eae00
+  - enabled: 1
+    path: Assets/Scenes/Stage_Test_Boost.unity
+    guid: ebf8c905efc39e743b67b4071f255cba
+  - enabled: 1
+    path: Assets/Scenes/Stage_Gimmicks.unity
+    guid: 0baec31a08cff4a46a51d3855a0b4ecf
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

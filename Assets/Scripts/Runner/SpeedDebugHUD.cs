@@ -9,6 +9,8 @@ public class SpeedDebugHUD : MonoBehaviour
 
     void OnGUI()
     {
+        if (RunManager.Instance != null && RunManager.Instance.HideHud) return;
+
         style ??= new GUIStyle(GUI.skin.label) { fontSize = 28, fontStyle = FontStyle.Bold };
         style.normal.textColor = Color.white;
         string boost = speed.BoostBonus > 0f ? $" (+{speed.BoostBonus:F0} BOOST)" : "";

@@ -5,12 +5,21 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] Transform visual;
-    [SerializeField] float jumpHeight = 1.8f;
-    [SerializeField] float airJumpHeight = 1.2f;   // 2단 점프 높이
-    [SerializeField] int maxJumps = 2;
-    [SerializeField] float gravityScale = 3f;
+    [Header("점프 (플레이 중에도 바로 반영됨)")]
+    [Tooltip("1단 점프 높이 (units)")]
+    [SerializeField, Min(0.1f)] float jumpHeight = 1.8f;
+    [Tooltip("2단 점프 높이. 공중에서 키를 다시 눌렀을 때 현재 높이에서 추가로 오르는 양")]
+    [SerializeField, Min(0.1f)] float airJumpHeight = 1.6f;
+    [Tooltip("점프 횟수 (2 = 2단 점프)")]
+    [SerializeField, Min(1)] int maxJumps = 2;
+    [Tooltip("중력 배율. 클수록 빨리 오르고 빨리 떨어진다 (체공 시간이 짧아짐)")]
+    [SerializeField, Min(0.1f)] float gravityScale = 3f;
+    [Tooltip("착지 직전에 누른 점프 키를 기억하는 시간 (초)")]
     [SerializeField] float jumpBufferTime = 0.1f;
-    [SerializeField] float slideHeightRatio = 0.5f;
+
+    [Header("슬라이드")]
+    [Tooltip("슬라이드 중 충돌 높이 비율")]
+    [SerializeField, Range(0.1f, 1f)] float slideHeightRatio = 0.5f;
 
     RunnerInput input;
     WitchFlight flight;
@@ -65,6 +74,8 @@ public class PlayerController : MonoBehaviour
             jumpBuffer = 0f;   // 비행 중 점프 키는 상승 조작
             return;
         }
+
+        rb.gravityScale = gravityScale;   // Inspector에서 플레이 중 바꾼 값을 반영
 
         if (input.JumpPressed) jumpBuffer = jumpBufferTime;
         else jumpBuffer -= Time.deltaTime;

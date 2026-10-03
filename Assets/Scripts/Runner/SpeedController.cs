@@ -6,11 +6,17 @@ public class SpeedController : MonoBehaviour
 {
     [SerializeField] RunnerInput input;
     [SerializeField] PlayerController player;
+    [Header("맵에 StageSettings가 있으면 시작 속도·가속은 그 값이 우선 (맵 프리팹에서 수정)")]
     [SerializeField] float startSpeed = 4f;          // units/sec
-    [SerializeField] float minSpeed = 1.5f;          // 감속 하한
     [SerializeField] float acceleration = 0.1f;      // 기준 속도 증가량 (units/sec²)
-    [SerializeField] float brakeDeceleration = 6f;   // 감속 키를 누를 때
-    [SerializeField] float recoveryRate = 4f;        // 키를 뗐을 때 기준 속도로 복귀하는 속도
+
+    [Header("감속 (플레이 중에도 바로 반영됨)")]
+    [Tooltip("감속 키로 내려갈 수 있는 최저 속도")]
+    [SerializeField] float minSpeed = 1.5f;
+    [Tooltip("감속 키를 누르는 동안 속도가 줄어드는 양 (units/sec²)")]
+    [SerializeField] float brakeDeceleration = 6f;
+    [Tooltip("키를 뗐을 때 기준 속도로 돌아오는 양 (units/sec²). 0이면 복귀하지 않는다")]
+    [SerializeField] float recoveryRate = 4f;
 
     float baseSpeed;
     float boostAmount;
