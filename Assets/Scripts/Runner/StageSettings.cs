@@ -17,6 +17,9 @@ public class StageSettings : MonoBehaviour
     // Assets/Resources/Backgrounds/ 안의 배경 프리팹 이름. 비우면 배경 없음. Inspector 팝업(StageSettingsEditor)으로 고른다.
     [HideInInspector] public string background = "";
 
+    // 클리어하면 전환 연출 후 불러올 씬 이름(Build Settings에 있어야 함). 비우면 같은 스테이지를 다시 시작한다. Inspector 팝업으로 고른다.
+    [HideInInspector] public string nextStage = "";
+
     // 목표 플레이타임 (GDD: 스테이지당 30초 정도)
     public const float TargetSeconds = 30f;
 

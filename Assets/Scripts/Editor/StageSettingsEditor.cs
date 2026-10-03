@@ -9,6 +9,7 @@ public class StageSettingsEditor : Editor
     {
         DrawDefaultInspector();
         DrawBackgroundPicker();
+        DrawNextStagePicker();
 
         var s = (StageSettings)target;
         EditorGUILayout.Space();
@@ -79,6 +80,32 @@ public class StageSettingsEditor : Editor
             }
         }
         EditorGUILayout.HelpBox("배경은 Play할 때 나타납니다 (Prefab 모드에서는 보이지 않음).", MessageType.None);
+    }
+
+    // Build Settings에 등록된 씬 중에서 클리어 후 넘어갈 스테이지를 고른다. 없음 = 같은 스테이지를 다시 시작.
+    void DrawNextStagePicker()
+    {
+        var names = new System.Collections.Generic.List<string> { "(없음 - 같은 스테이지 반복)" };
+        foreach (var scene in EditorBuildSettings.scenes)
+        {
+            if (scene.enabled) names.Add(System.IO.Path.GetFileNameWithoutExtension(scene.path));
+        }
+
+        serializedObject.Update();
+        var prop = serializedObject.FindProperty("nextStage");
+        int index = Mathf.Max(0, names.IndexOf(prop.stringValue));
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("스테이지 전환", EditorStyles.boldLabel);
+        int picked = EditorGUILayout.Popup("다음 스테이지", index, names.ToArray());
+        if (picked != index || (picked == 0 && !string.IsNullOrEmpty(prop.stringValue)))
+        {
+            prop.stringValue = picked == 0 ? "" : names[picked];
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        if (!string.IsNullOrEmpty(prop.stringValue) && !names.Contains(prop.stringValue))
+            EditorGUILayout.HelpBox($"'{prop.stringValue}' 씬이 Build Settings에 없습니다. 프로그래머에게 말하세요.", MessageType.Warning);
     }
 
     static bool HasGroundAt(StageSettings s, float localX)
