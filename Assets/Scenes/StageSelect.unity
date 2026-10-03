@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde13c0e9490a914ea8382ed07ac5639, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageSelectScreen
+  lockIcon: {fileID: 1263597802801988739, guid: ef1da5481a100224a8e04480014abe8e, type: 3}
 --- !u!4 &1458655601
 Transform:
   m_ObjectHideFlags: 0

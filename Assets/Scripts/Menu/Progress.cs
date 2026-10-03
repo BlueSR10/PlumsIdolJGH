@@ -23,7 +23,8 @@ public static class StageCatalog
 
     public static int IndexOf(string sceneName) => System.Array.IndexOf(Scenes, sceneName);
 
-    public static string Label(int index) => $"{index / StagesPerWorld + 1}-{index % StagesPerWorld + 1}";
+    // 화면에 보이는 스테이지 번호 (1~6)
+    public static string Label(int index) => (index + 1).ToString();
 }
 
 // 진행 저장(PlayerPrefs). 앞 스테이지를 순서대로 깨야 다음 스테이지가 열린다.

@@ -11,10 +11,14 @@ public class StageSelectScreen : MonoBehaviour
         public RectTransform rect;
         public Image image;
         public Text number;
+        public Image lockIcon;   // 잠긴 칸은 번호 대신 이 아이콘을 보인다
         public Text status;
     }
 
     const int Rows = StageCatalog.StagesPerWorld;
+
+    [Tooltip("잠긴 스테이지에 번호 대신 보일 아이콘 (Assets/Art/UI)")]
+    [SerializeField] Sprite lockIcon;
 
     MenuUI.Controls controls;
     Slot[] slots;
@@ -52,6 +56,7 @@ public class StageSelectScreen : MonoBehaviour
                     rect = rect,
                     image = rect.GetComponent<Image>(),
                     number = MenuUI.Label(rect, "Number", StageCatalog.Label(index), 110, Color.white, new Vector2(0f, 0.30f), Vector2.one),
+                    lockIcon = MenuUI.Icon(rect, "Lock", lockIcon, new Vector2(0.3f, 0.34f), new Vector2(0.7f, 0.94f)),
                     status = MenuUI.Label(rect, "Status", "", 40, Color.white, Vector2.zero, new Vector2(1f, 0.32f)),
                 };
             }
@@ -140,6 +145,10 @@ public class StageSelectScreen : MonoBehaviour
             bool isSelected = i == selected;
 
             s.image.color = !unlocked ? MenuUI.CardLocked : isSelected ? MenuUI.CardSelected : MenuUI.Card;
+            // 잠금 아이콘이 없으면(미지정) 흐린 번호로 대신한다
+            bool showIcon = !unlocked && s.lockIcon.sprite != null;
+            s.lockIcon.enabled = showIcon;
+            s.number.enabled = !showIcon;
             s.number.color = unlocked ? Color.white : new Color(1f, 1f, 1f, 0.3f);
             if (!unlocked) { s.status.text = "LOCKED"; s.status.color = new Color(1f, 1f, 1f, 0.45f); }
             else if (cleared) { s.status.text = "CLEAR"; s.status.color = new Color(0.55f, 1f, 0.6f); }

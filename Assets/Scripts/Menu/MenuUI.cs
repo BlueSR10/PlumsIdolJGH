@@ -81,6 +81,17 @@ public static class MenuUI
         return t;
     }
 
+    // 비율을 유지해 영역 안에 그리는 아이콘
+    public static Image Icon(Transform parent, string name, Sprite sprite, Vector2 min, Vector2 max)
+    {
+        var rt = Box(parent, name, min, max, Color.white);
+        var img = rt.GetComponent<Image>();
+        img.sprite = sprite;
+        img.preserveAspect = true;
+        img.raycastTarget = false;
+        return img;
+    }
+
     // 마우스가 이 영역 위에 있는가 (오버레이 Canvas라 카메라는 null)
     public static bool MouseOver(RectTransform rt)
     {
