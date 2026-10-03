@@ -252,7 +252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   visual: {fileID: 327703313597546289}
   jumpHeight: 1.8
-  airJumpHeight: 1.2
+  airJumpHeight: 1.6
   maxJumps: 2
   gravityScale: 2
   jumpBufferTime: 0.1
