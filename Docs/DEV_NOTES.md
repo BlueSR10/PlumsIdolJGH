@@ -5,7 +5,7 @@
 ## 기술 규약
 - Full HD(1920×1080), URP 2D, Pixel Perfect Camera
 - 스프라이트: 캔버스 64×64, PPU 64, Filter Point, Compression None
-- 기준 해상도: 480×270 (4배, 임시. 캐릭터 몸 높이 확인 후 확정)
+- 기준 해상도: 640×360 (3배, 캐릭터가 화면 높이의 1/5.6). 카메라 y=0.703125 (바닥을 화면 하단에 맞춤)
 - 월드 구조: 플레이어는 화면 고정, `Stage`(kinematic)가 왼쪽으로 스크롤
 - 입력: `RunnerInput`에서 코드로 정의 — 점프 Space/↑/W, 슬라이드 S/↓, 감속 LeftShift
 - `Assets/Placeholders/`: 임시 사각형 스프라이트. 실제 아트 연결 후 삭제
