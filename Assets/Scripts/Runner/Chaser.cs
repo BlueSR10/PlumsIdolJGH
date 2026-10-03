@@ -7,7 +7,7 @@ public class Chaser : MonoBehaviour
 {
     [SerializeField] float speed = 4.5f;            // 스테이지별로 다르게 설정 (units/sec)
     [SerializeField] float startGap = 8f;           // 시작/재시작 시 플레이어와의 거리
-    [SerializeField] float catchDistance = 1.25f;   // 중심 간 거리가 이 이하이면 사망
+    [SerializeField] float catchDistance = 0.6f;    // 중심 간 거리가 이 이하이면 사망. 쿠키 그림 앞끝(0.375) + 마녀 충돌 반폭(0.25)에 맞춘 값
     [SerializeField] float warningDistance = 5f;    // 이 거리 안으로 들어오면 Proximity가 0보다 커진다 (발소리용)
 
     static readonly int RunState = Animator.StringToHash("Run");

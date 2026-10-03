@@ -108,7 +108,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Chaser
   speed: 4.5
   startGap: 8
-  catchDistance: 1.25
+  catchDistance: 0.6
   warningDistance: 5
 --- !u!95 &4981044676081299235
 Animator:
