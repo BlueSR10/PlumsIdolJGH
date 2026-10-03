@@ -24,8 +24,12 @@ public class Chaser : MonoBehaviour
     CookieHop leaderHop;
     Collider2D playerBody;
     float localX;
+    bool introRunning;     // 시작 연출: 스테이지가 멈춰 있어도 쿠키가 달려온다 (튜토리얼)
+    float introSpeed;
+    float introStopGap;
 
     public float StartGap => startGap;
+    public bool IntroRunning => introRunning;
     public float LocalX => localX;
     public float Gap => RunManager.Instance.PlayerLocalX - localX;
 
@@ -40,8 +44,19 @@ public class Chaser : MonoBehaviour
 
     public void ResetTo(float x)
     {
+        introRunning = false;
         localX = x;
         Place();
+    }
+
+    // 시작 연출: 마녀에게서 startGap 떨어진 곳에서 출발해 stopGap까지 speed로 달려온 뒤 멈춘다 (잡히지 않는다).
+    // 끝나면(IntroRunning이 false) 호출한 쪽이 스테이지 스크롤을 시작한다.
+    public void BeginIntro(float startGap, float speed, float stopGap)
+    {
+        ResetTo(RunManager.Instance.PlayerLocalX - startGap);
+        introRunning = true;
+        introSpeed = speed;
+        introStopGap = stopGap;
     }
 
     void Awake()
@@ -88,6 +103,15 @@ public class Chaser : MonoBehaviour
     {
         var run = RunManager.Instance;
         if (run == null || run.Current != RunManager.State.Running) return;
+
+        if (introRunning)
+        {
+            localX += introSpeed * Time.fixedDeltaTime;
+            Place();
+            if (Gap <= introStopGap) introRunning = false;
+            return;
+        }
+        if (run.Holding) return;
 
         float next = localX + speed * Time.fixedDeltaTime;
 
