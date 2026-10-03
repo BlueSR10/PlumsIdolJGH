@@ -61,6 +61,14 @@ public class StageBuildSync : IPreprocessBuildWithReport
             menu++;
         }
 
+        // 엔딩 씬도 빌드에 넣는다
+        var endingPath = $"Assets/Scenes/{StageCatalog.EndingScene}.unity";
+        if (System.IO.File.Exists(endingPath) && !scenes.Exists(s => s.path == endingPath))
+        {
+            scenes.Add(new EditorBuildSettingsScene(endingPath, true));
+            menu++;
+        }
+
         if (added > 0 || menu > 0) EditorBuildSettings.scenes = scenes.ToArray();
         UnityEngine.Debug.Log($"Build Settings에 스테이지 씬 {added}개를 등록했습니다 (총 {scenes.Count}개, 시작 화면이 첫 씬).");
     }

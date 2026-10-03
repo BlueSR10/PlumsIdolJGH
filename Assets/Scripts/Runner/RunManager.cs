@@ -131,13 +131,41 @@ public class RunManager : MonoBehaviour
         Cleared?.Invoke();
 
         // 다음 스테이지가 있으면 멈추지 않고 계속 달린 채로 어두워진다. 없으면 멈추고 같은 스테이지를 다시 시작한다.
+        // 맵에 다음 스테이지가 지정돼 있지 않아도 스테이지 목록(StageCatalog)의 스테이지면 목록 순서대로 이어진다(마지막은 엔딩).
         var settings = FindFirstObjectByType<StageSettings>();
-        if (settings != null && !string.IsNullOrEmpty(settings.nextStage))
+        string next = settings != null ? settings.nextStage : "";
+        if (string.IsNullOrEmpty(next)) next = NextInCatalog(SceneManager.GetActiveScene().name);
+
+        if (next == StageCatalog.EndingScene)
         {
-            StartCoroutine(TransitionTo(settings.nextStage));
+            StartCoroutine(GoToEnding());   // 어두워지지 않고 그대로 달린 채 엔딩으로
+            return;
+        }
+        if (!string.IsNullOrEmpty(next))
+        {
+            StartCoroutine(TransitionTo(next));
             return;
         }
         speed.Frozen = true;
+    }
+
+    // 스테이지 목록에서 이 씬 다음 스테이지 (마지막이면 엔딩, 목록 밖이거나 다음 씬이 아직 없으면 빈 문자열)
+    static string NextInCatalog(string sceneName)
+    {
+        int index = StageCatalog.IndexOf(sceneName);
+        if (index < 0) return "";
+        if (index == StageCatalog.Count - 1) return StageCatalog.EndingScene;
+        var next = StageCatalog.Scenes[index + 1];
+        return StageLoader.Exists(next) ? next : "";
+    }
+
+    // 마지막 스테이지 클리어: 화면을 어둡게 하지 않고 지금 속도 그대로 엔딩 씬으로 넘어가 계속 달린다
+    IEnumerator GoToEnding()
+    {
+        Transitioning = true;
+        EndingDirector.CarriedSpeed = speed.ScrollSpeed;
+        yield return null;
+        StageLoader.Load(StageCatalog.EndingScene);
     }
 
     // 일시정지 메뉴의 "다시 시작": 스테이지를 처음부터

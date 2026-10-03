@@ -7,16 +7,17 @@ public static class StageCatalog
     public const string TitleScene = "Title";
     public const string StageSelectScene = "StageSelect";
     public const string TutorialScene = "Stage_Tutorial";
+    public const string EndingScene = "Ending";   // 마지막 스테이지를 깨면 간다 (쿠키화 연출 후 시작 화면으로)
 
     public const int StagesPerWorld = 2;
     public static readonly string[] Worlds = { "마녀의 숲", "마녀의 집", "마녀의 오븐" };
 
-    // 클리어해야 하는 순서(앞에서부터 차례로 열린다)
+    // 클리어해야 하는 순서(앞에서부터 차례로 열린다). 팀원이 만드는 씬 이름. 아직 없는 씬은 목록에서 COMING SOON.
     public static readonly string[] Scenes =
     {
-        "Stage_1_1", "Stage_1_2",
-        "Stage_2_1", "Stage_2_2",
-        "Stage_3_1", "Stage_3_2",
+        "Stage_Stage1", "Stage_Stage2",
+        "Stage_Stage3", "Stage_Stage4",
+        "Stage_Stage5", "Stage_Stage6",
     };
 
     public static int Count => Scenes.Length;
