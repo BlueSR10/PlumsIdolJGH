@@ -121,6 +121,7 @@ public class RunManager : MonoBehaviour
         if (Current != State.Running) return;
         Current = State.Cleared;
         stateTimer = clearDelay;
+        Progress.MarkCleared(SceneManager.GetActiveScene().name);   // 진행 저장 (스테이지 목록의 잠금 해제)
         Cleared?.Invoke();
 
         // 다음 스테이지가 있으면 멈추지 않고 계속 달린 채로 어두워진다. 없으면 멈추고 같은 스테이지를 다시 시작한다.

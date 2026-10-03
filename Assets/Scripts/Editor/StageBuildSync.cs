@@ -50,7 +50,18 @@ public class StageBuildSync : IPreprocessBuildWithReport
             added++;
         }
 
-        if (added > 0) EditorBuildSettings.scenes = scenes.ToArray();
-        UnityEngine.Debug.Log($"Build Settings에 스테이지 씬 {added}개를 등록했습니다 (총 {scenes.Count}개).");
+        // 시작 화면(첫 씬)과 스테이지 선택 화면은 맨 앞에 둔다
+        int menu = 0;
+        foreach (var name in new[] { StageCatalog.StageSelectScene, StageCatalog.TitleScene })
+        {
+            var path = $"Assets/Scenes/{name}.unity";
+            if (!System.IO.File.Exists(path)) continue;
+            scenes.RemoveAll(s => s.path == path);
+            scenes.Insert(0, new EditorBuildSettingsScene(path, true));
+            menu++;
+        }
+
+        if (added > 0 || menu > 0) EditorBuildSettings.scenes = scenes.ToArray();
+        UnityEngine.Debug.Log($"Build Settings에 스테이지 씬 {added}개를 등록했습니다 (총 {scenes.Count}개, 시작 화면이 첫 씬).");
     }
 }
