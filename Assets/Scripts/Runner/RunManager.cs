@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-// 한 번의 도전(시작 → 사망/클리어)을 관리한다. 사망하면 마지막 체크포인트 상태로 되돌린다.
+// 한 번의 도전(시작 → 사망/클리어)을 관리한다. 스테이지 중간 체크포인트는 없으므로 사망하면 처음부터 다시 시작한다.
 public class RunManager : MonoBehaviour
 {
     public enum State { Running, Dead, Cleared }
@@ -10,20 +9,14 @@ public class RunManager : MonoBehaviour
     [SerializeField] PlayerController player;
     [SerializeField] SpeedController speed;
     [SerializeField] Chaser chaser;
-    [SerializeField] float respawnDelay = 0.8f;
+    [SerializeField] float restartDelay = 0.8f;
     [SerializeField] float clearDelay = 2.5f;
-    [SerializeField] float respawnChaserGap = 7f;   // 체크포인트 부활 시 추격자와의 거리
     [SerializeField] float fallDeathDepth = 6f;     // 시작 높이보다 이만큼 아래로 떨어지면 사망
 
-    struct Snapshot
-    {
-        public float localX, speed, baseSpeed, stageTime;
-    }
-
-    Snapshot initial;
-    Snapshot checkpoint;
     float stateTimer;
     float spawnY;
+    float startSpeed;
+    float startBaseSpeed;
 
     public static RunManager Instance { get; private set; }
 
@@ -32,9 +25,6 @@ public class RunManager : MonoBehaviour
     public float PlayerLocalX => player.transform.position.x - stage.position.x;
     public float StartLocalX { get; private set; }
     public float GoalLocalX { get; private set; }
-    public IReadOnlyList<float> CheckpointXs => checkpointXs;
-
-    readonly List<float> checkpointXs = new List<float>();
 
     void Awake()
     {
@@ -45,13 +35,11 @@ public class RunManager : MonoBehaviour
     {
         spawnY = player.transform.position.y;
         StartLocalX = PlayerLocalX;
-        initial = new Snapshot { localX = StartLocalX, speed = speed.Speed, baseSpeed = speed.BaseSpeed, stageTime = 0f };
-        checkpoint = initial;
+        startSpeed = speed.Speed;
+        startBaseSpeed = speed.BaseSpeed;
 
         var goal = FindFirstObjectByType<Goal>();
         GoalLocalX = goal != null ? ToLocalX(goal.transform.position.x) : StartLocalX + 100f;
-        foreach (var c in FindObjectsByType<Checkpoint>(FindObjectsSortMode.None))
-            checkpointXs.Add(ToLocalX(c.transform.position.x));
 
         chaser.ResetTo(StartLocalX - chaser.StartGap);
     }
@@ -66,10 +54,7 @@ public class RunManager : MonoBehaviour
         }
 
         stateTimer -= Time.deltaTime;
-        if (stateTimer > 0f) return;
-
-        if (Current == State.Cleared) checkpoint = initial;
-        Respawn();
+        if (stateTimer <= 0f) Restart();
     }
 
     public float ToLocalX(float worldX) => worldX - stage.position.x;
@@ -78,14 +63,8 @@ public class RunManager : MonoBehaviour
     {
         if (Current != State.Running) return;
         Current = State.Dead;
-        stateTimer = respawnDelay;
+        stateTimer = restartDelay;
         speed.Frozen = true;
-    }
-
-    public void ReachCheckpoint(float localX)
-    {
-        if (Current != State.Running || localX <= checkpoint.localX + 0.01f) return;
-        checkpoint = new Snapshot { localX = localX, speed = speed.Speed, baseSpeed = speed.BaseSpeed, stageTime = StageTime };
     }
 
     public void Clear()
@@ -96,17 +75,17 @@ public class RunManager : MonoBehaviour
         speed.Frozen = true;
     }
 
-    void Respawn()
+    void Restart()
     {
-        var pos = new Vector2(player.transform.position.x - checkpoint.localX, stage.position.y);
+        var pos = new Vector2(player.transform.position.x - StartLocalX, stage.position.y);
         stage.position = pos;
         stage.transform.position = pos;
 
-        speed.Restore(checkpoint.speed, checkpoint.baseSpeed);
+        speed.Restore(startSpeed, startBaseSpeed);
         speed.Frozen = false;
-        StageTime = checkpoint.stageTime;
+        StageTime = 0f;
         player.ResetState();
-        chaser.ResetTo(checkpoint.localX - respawnChaserGap);
+        chaser.ResetTo(StartLocalX - chaser.StartGap);
         Current = State.Running;
     }
 }

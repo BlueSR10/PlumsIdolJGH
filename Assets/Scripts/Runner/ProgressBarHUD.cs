@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// 화면 상단 막대바에 마녀·추격자·체크포인트·골 위치를 표시한다 (GDD 6.2). 임시 IMGUI 구현.
+// 화면 상단 막대바에 마녀·추격자·골 위치를 표시한다 (GDD 6.2). 임시 IMGUI 구현.
 public class ProgressBarHUD : MonoBehaviour
 {
     [SerializeField] Chaser chaser;
@@ -19,8 +19,6 @@ public class ProgressBarHUD : MonoBehaviour
         float len = Mathf.Max(0.01f, run.GoalLocalX - run.StartLocalX);
 
         Fill(new Rect(x0, y, w, h), new Color(0f, 0f, 0f, 0.55f));
-        foreach (float cx in run.CheckpointXs)
-            Fill(new Rect(x0 + w * Mathf.Clamp01((cx - run.StartLocalX) / len) - 2f, y - 6f, 4f, h + 12f), new Color(0.3f, 0.9f, 0.4f));
         Fill(new Rect(x0 + w - 3f, y - 8f, 6f, h + 16f), new Color(1f, 0.85f, 0.2f));
 
         float c = Mathf.Clamp01((chaser.LocalX - run.StartLocalX) / len);
