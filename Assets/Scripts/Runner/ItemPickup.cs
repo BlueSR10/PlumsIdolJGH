@@ -6,6 +6,9 @@ public class ItemPickup : MonoBehaviour
 {
     public enum Kind { Giant, Small, Boost }
 
+    // 아이템을 먹은 순간 발생한다 (소리·이펙트용).
+    public static event System.Action<Kind> Picked;
+
     [SerializeField] Kind kind;
     [SerializeField] float duration = 5f;       // 효과 지속 시간 (임시)
     [SerializeField] float boostAmount = 4f;    // 가속 아이템 전용: 스크롤 속도에 더해지는 값 (units/sec, 임시)
@@ -44,6 +47,7 @@ public class ItemPickup : MonoBehaviour
         }
 
         SetVisible(false);
+        Picked?.Invoke(kind);
     }
 
     void Restore() => SetVisible(true);

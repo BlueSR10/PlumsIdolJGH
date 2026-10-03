@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
     Vector3 spawnPosition;
     float visualHalfHeight;
     float jumpBuffer;
+    int resetFrame = -1;   // ResetState가 불린 프레임
     float sizeScale = 1f;   // 거대화/소형화 배율 (PlayerForm이 설정)
     int jumpsUsed;
     bool sliding;
@@ -42,6 +43,9 @@ public class PlayerController : MonoBehaviour
     public bool Flying => flight != null && flight.Active;
     public bool Sliding => sliding;
     public bool DoubleJumped { get; private set; }   // 이번 체공에서 2단 점프를 썼는지 (애니메이션용)
+
+    // 점프를 시작한 순간 발생한다. 인자는 공중에서 쓴 2단 점프인지 여부 (소리용).
+    public event System.Action<bool> Jumped;
 
     void Awake()
     {
@@ -77,7 +81,8 @@ public class PlayerController : MonoBehaviour
 
         rb.gravityScale = gravityScale;   // Inspector에서 플레이 중 바꾼 값을 반영
 
-        if (input.JumpPressed) jumpBuffer = jumpBufferTime;
+        // 재시작 키(Space)가 점프 키이기도 해서, 재시작과 같은 프레임에 눌린 점프는 무시한다
+        if (input.JumpPressed && Time.frameCount != resetFrame) jumpBuffer = jumpBufferTime;
         else jumpBuffer -= Time.deltaTime;
     }
 
@@ -98,10 +103,12 @@ public class PlayerController : MonoBehaviour
             float height = jumpsUsed == 0 ? jumpHeight : airJumpHeight;
             float g = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
             rb.linearVelocity = new Vector2(0f, Mathf.Sqrt(2f * g * height));
-            if (jumpsUsed > 0) DoubleJumped = true;
+            bool airJump = jumpsUsed > 0;
+            if (airJump) DoubleJumped = true;
             jumpsUsed++;
             jumpBuffer = 0f;
             SetSliding(false);
+            Jumped?.Invoke(airJump);
             return;
         }
 
@@ -161,6 +168,7 @@ public class PlayerController : MonoBehaviour
         rb.position = spawnPosition;
         transform.position = spawnPosition;
         jumpBuffer = 0f;
+        resetFrame = Time.frameCount;
         jumpsUsed = 0;
         DoubleJumped = false;
         SetSliding(false);

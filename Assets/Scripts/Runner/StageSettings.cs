@@ -20,6 +20,12 @@ public class StageSettings : MonoBehaviour
     // 클리어하면 전환 연출 후 불러올 씬 이름(Build Settings에 있어야 함). 비우면 같은 스테이지를 다시 시작한다. Inspector 팝업으로 고른다.
     [HideInInspector] public string nextStage = "";
 
+    // 이 스테이지의 배경음악. Inspector 팝업(StageSettingsEditor)으로 Assets/Audio/BGM의 곡 중에서 고른다. 없음 = 배경음악 없음.
+    // 다음 스테이지가 같은 곡이면 끊기지 않고 이어지고, 다른 곡이면 서서히 바뀐다.
+    [HideInInspector] public AudioClip bgm;
+    [Header("배경음악")]
+    [Range(0f, 1f)] public float bgmVolume = 0.6f;
+
     // 목표 플레이타임 (GDD: 스테이지당 30초 정도)
     public const float TargetSeconds = 30f;
 
@@ -37,6 +43,8 @@ public class StageSettings : MonoBehaviour
 
         var chaser = FindFirstObjectByType<Chaser>();
         if (chaser != null) chaser.Configure(chaserSpeed, chaserStartGap);
+
+        SoundManager.PlayBgm(bgm, bgmVolume);
 
         if (!string.IsNullOrEmpty(background))
         {
