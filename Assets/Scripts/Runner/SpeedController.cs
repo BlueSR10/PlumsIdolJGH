@@ -16,9 +16,6 @@ public class SpeedController : MonoBehaviour
 
     public float Speed { get; private set; }
 
-    // 공중에서는 속도 조절 불가. 마녀 비행 중에만 true (비행 구현 시 사용)
-    public bool AirControl { get; set; }
-
     // 사망/클리어 중에는 스크롤을 멈춘다
     public bool Frozen { get; set; }
     public float ScrollSpeed => Frozen ? 0f : Speed;
@@ -43,7 +40,7 @@ public class SpeedController : MonoBehaviour
         float dt = Time.deltaTime;
         baseSpeed += acceleration * dt;
 
-        if (!player.Grounded && !AirControl) return;   // 공중에서는 속도 유지
+        if (!player.Grounded && !player.Flying) return;   // 공중에서는 속도 유지 (마녀 비행 중에만 조절 가능)
 
         if (input.BrakeHeld)
             Speed = Mathf.Max(minSpeed, Speed - brakeDeceleration * dt);

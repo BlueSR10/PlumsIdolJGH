@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 3507915921569714296}
   - component: {fileID: 106322463172662215}
   - component: {fileID: 5589051805970566811}
+  - component: {fileID: 6535711202334079854}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -226,6 +227,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   visual: {fileID: 327703313597546289}
   jumpHeight: 1.8
+  airJumpHeight: 1.2
+  maxJumps: 2
   gravityScale: 2
   jumpBufferTime: 0.1
   slideHeightRatio: 0.5
+--- !u!114 &6535711202334079854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4905463301342820822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 153d318c363043e40bc8109124c96f1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WitchFlight
+  duration: 5
+  verticalSpeed: 4.5
+  maxHeight: 3
+  visual: {fileID: 952134674473859553}
+  flightColor: {r: 0.8, g: 0.5, b: 1, a: 1}

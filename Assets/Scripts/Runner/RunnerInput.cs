@@ -8,9 +8,13 @@ public class RunnerInput : MonoBehaviour
     InputAction slide;
     InputAction brake;
 
+    InputAction ability;
+
     public bool JumpPressed => jump.WasPressedThisFrame();
+    public bool JumpHeld => jump.IsPressed();
     public bool SlideHeld => slide.IsPressed();
     public bool BrakeHeld => brake.IsPressed();
+    public bool AbilityPressed => ability.WasPressedThisFrame();
 
     void Awake()
     {
@@ -28,6 +32,10 @@ public class RunnerInput : MonoBehaviour
         brake = new InputAction("Brake", InputActionType.Button);
         brake.AddBinding("<Keyboard>/leftShift");
         brake.AddBinding("<Gamepad>/leftTrigger");
+
+        ability = new InputAction("Ability", InputActionType.Button);
+        ability.AddBinding("<Keyboard>/e");
+        ability.AddBinding("<Gamepad>/buttonWest");
     }
 
     void OnEnable()
@@ -35,6 +43,7 @@ public class RunnerInput : MonoBehaviour
         jump.Enable();
         slide.Enable();
         brake.Enable();
+        ability.Enable();
     }
 
     void OnDisable()
@@ -42,5 +51,6 @@ public class RunnerInput : MonoBehaviour
         jump.Disable();
         slide.Disable();
         brake.Disable();
+        ability.Disable();
     }
 }
