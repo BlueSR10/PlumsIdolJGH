@@ -27,7 +27,7 @@ public class SyArrivalGate : MonoBehaviour
     Collider2D playerBox;
     SpeedController speed;
     float acceleration;
-    float halfHeight;
+    float bottomDrop;     // 문 위치(피벗)에서 충돌 상자 아래 끝까지의 거리
     float playerBottom;   // 땅에 서 있을 때 충돌 상자 아래 끝
     float playerHeight;   // 서 있을 때 충돌 상자 높이
     float phase;
@@ -42,7 +42,7 @@ public class SyArrivalGate : MonoBehaviour
 
     void Start()
     {
-        halfHeight = box.bounds.extents.y;
+        bottomDrop = transform.position.y - box.bounds.min.y;
         speed = FindFirstObjectByType<SpeedController>();
         var settings = FindFirstObjectByType<StageSettings>();
         if (settings != null) acceleration = settings.acceleration;
@@ -86,7 +86,7 @@ public class SyArrivalGate : MonoBehaviour
         locked = true;
         float headY = playerBottom + playerHeight * (requireSlide ? slideHeightRatio : 1f);
         float rest = transform.parent != null ? transform.parent.TransformPoint(origin).y : origin.y;
-        float s = Mathf.Clamp((headY + clearance + halfHeight - rest) / amplitude, -1f, 1f);
+        float s = Mathf.Clamp((headY + clearance + bottomDrop - rest) / amplitude, -1f, 1f);
         phase = Mathf.Repeat(Mathf.Asin(s) / (Mathf.PI * 2f) - arrival / period, 1f);
     }
 

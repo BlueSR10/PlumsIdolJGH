@@ -52,6 +52,9 @@ MonoBehaviour:
   triggerDistance: 1
   duration: 0.1
   hiddenBefore: 0
+  cancelIfAirborne: 0
+  returnDelay: -1
+  returnDuration: 0.08
 --- !u!1 &3428536287655195820
 GameObject:
   m_ObjectHideFlags: 0
@@ -104,6 +107,9 @@ MonoBehaviour:
   triggerDistance: 1.8
   duration: 0.15
   hiddenBefore: 1
+  cancelIfAirborne: 0
+  returnDelay: -1
+  returnDuration: 0.08
 --- !u!1 &4004102385684633220
 GameObject:
   m_ObjectHideFlags: 0
@@ -4339,6 +4345,9 @@ MonoBehaviour:
   triggerDistance: 2.9
   duration: 0.15
   hiddenBefore: 1
+  cancelIfAirborne: 0
+  returnDelay: -1
+  returnDuration: 0.08
 --- !u!4 &6555023677711775614 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3031423025659229459, guid: 53bb07f880c2a4c4fa39b2a61139deed, type: 3}
