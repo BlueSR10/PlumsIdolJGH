@@ -27,10 +27,11 @@ public class ProgressBarHUD : MonoBehaviour
         Fill(new Rect(x0 + w * c - m * 0.5f, y + h * 0.5f - m * 0.5f, m, m), new Color(0.95f, 0.25f, 0.25f));
         Fill(new Rect(x0 + w * p - m * 0.5f, y + h * 0.5f - m * 0.5f, m, m), new Color(0.35f, 0.65f, 1f));
 
-        if (run.Current == RunManager.State.Running) return;
+        // 사망 문구는 GameOverHUD가 보여 준다
+        if (run.Current != RunManager.State.Cleared) return;
         label ??= new GUIStyle(GUI.skin.label) { fontSize = 64, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter };
         label.normal.textColor = Color.white;
-        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), run.Current == RunManager.State.Dead ? "DEAD" : "CLEAR!", label);
+        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "CLEAR!", label);
     }
 
     static void Fill(Rect r, Color color)

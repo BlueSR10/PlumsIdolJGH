@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
     Vector3 spawnPosition;
     float visualHalfHeight;
     float jumpBuffer;
+    int resetFrame = -1;   // ResetState가 불린 프레임
     float sizeScale = 1f;   // 거대화/소형화 배율 (PlayerForm이 설정)
     int jumpsUsed;
     bool sliding;
@@ -80,7 +81,8 @@ public class PlayerController : MonoBehaviour
 
         rb.gravityScale = gravityScale;   // Inspector에서 플레이 중 바꾼 값을 반영
 
-        if (input.JumpPressed) jumpBuffer = jumpBufferTime;
+        // 재시작 키(Space)가 점프 키이기도 해서, 재시작과 같은 프레임에 눌린 점프는 무시한다
+        if (input.JumpPressed && Time.frameCount != resetFrame) jumpBuffer = jumpBufferTime;
         else jumpBuffer -= Time.deltaTime;
     }
 
@@ -166,6 +168,7 @@ public class PlayerController : MonoBehaviour
         rb.position = spawnPosition;
         transform.position = spawnPosition;
         jumpBuffer = 0f;
+        resetFrame = Time.frameCount;
         jumpsUsed = 0;
         DoubleJumped = false;
         SetSliding(false);
