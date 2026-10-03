@@ -139,6 +139,18 @@ public class StageSettingsEditor : Editor
 
         if (!string.IsNullOrEmpty(prop.stringValue) && !names.Contains(prop.stringValue))
             EditorGUILayout.HelpBox($"'{prop.stringValue}' 씬이 Build Settings에 없습니다. 프로그래머에게 말하세요.", MessageType.Warning);
+
+        // 목록에 안 나오는 스테이지 씬이 있으면 이유를 알려 준다 (새로 만들거나 이름을 바꾼 씬은 Build Settings에 등록돼야 목록에 나온다)
+        var missing = new System.Collections.Generic.List<string>();
+        foreach (var guid in AssetDatabase.FindAssets("t:Scene Stage_", new[] { "Assets/Scenes" }))
+        {
+            var name = System.IO.Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(guid));
+            if (name.StartsWith("Stage_") && !names.Contains(name)) missing.Add(name);
+        }
+        if (missing.Count > 0)
+            EditorGUILayout.HelpBox(
+                $"목록에 없는 스테이지 씬: {string.Join(", ", missing)}\nBuild Settings에 등록되지 않아서입니다. 프로그래머에게 등록을 부탁하세요.",
+                MessageType.Info);
     }
 
     static bool HasGroundAt(StageSettings s, float localX)
