@@ -27,6 +27,9 @@ public class CookieHop : MonoBehaviour
     bool chain;         // 연달아 뛰는 두 번째 점프인지
     CookieHop parentHop;
 
+    // 지금 뛰어오른 높이 (Chaser가 몸통 상자를 바닥에 두려고 읽는다)
+    public float Offset => offset;
+
     void Awake()
     {
         baseY = transform.localPosition.y;
