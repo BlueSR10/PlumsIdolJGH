@@ -71,8 +71,17 @@ public class PlayerController : MonoBehaviour
         visualHalfHeight = visualScale.y * spriteHeight * 0.5f;
     }
 
+    // 사망(Game Over) 중에는 점프·슬라이드 입력을 받지 않는다
+    bool Dead => RunManager.Instance != null && RunManager.Instance.Current == RunManager.State.Dead;
+
     void Update()
     {
+        if (Dead)
+        {
+            jumpBuffer = 0f;
+            return;
+        }
+
         if (Flying)
         {
             jumpBuffer = 0f;   // 비행 중 점프 키는 상승 조작
@@ -97,6 +106,8 @@ public class PlayerController : MonoBehaviour
             DoubleJumped = false;
         }
         else if (!Grounded && jumpsUsed == 0) jumpsUsed = 1;   // 점프 없이 공중에 뜬 경우 1회 소모
+
+        if (Dead) return;   // 점프·슬라이드는 건너뛴다 (쓰러진 채로 점프하거나 슬라이드 소리가 나지 않게)
 
         if (jumpBuffer > 0f && jumpsUsed < maxJumps)
         {
