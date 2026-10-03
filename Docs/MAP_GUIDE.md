@@ -13,7 +13,8 @@
 |---|---|
 | 내 `Assets/Prefabs/Maps/Map_내이름.prefab` | `Assets/Prefabs/StageRig.prefab` |
 | 내 `Assets/Scenes/Stage_내이름.unity` | `Assets/Prefabs/Palette/`의 원본 조각 |
-| | `Assets/Scripts/`, `ProjectSettings/` |
+| 내 `Assets/Prefabs/Gimmicks/내이름/` (프리팹 변형, 내가 만든 기믹) | `Assets/Scripts/Runner/`, `Assets/Scripts/Editor/`, `ProjectSettings/` |
+| 내 `Assets/Scripts/Gimmicks/내이름/` (새 동작이 필요할 때만, 9장) | 다른 사람의 `Gimmicks/` 폴더 |
 | | 다른 사람의 `Map_*`, `Stage_*` |
 
 원본을 고쳐야 할 것 같으면 직접 고치지 말고 프로그래머에게 말한다.
@@ -170,3 +171,43 @@ Spike, Bar, Bird는 파괴 가능이고 Block, Gate는 파괴 불가다. 아이�
 | 값을 바꿨는데 반영이 안 된다 | Play를 끄고 바꿨는지, 저장했는지 확인 |
 
 앞으로 트램펄린, 부서지는 발판 같은 새 기믹이 생기면 팔레트에 조각이 추가된다.
+
+## 9. 기믹을 바꾸거나 새로 만들 때 (꼭 읽기)
+
+팔레트 조각에 없는 모습이나 동작이 필요할 때는 **아래 세 단계 중 가장 위에 있는 방법**을 쓴다. 위 단계로 되면 아래 단계로 내려가지 않는다.
+
+| 상황 | 방법 | 저장되는 곳 |
+|---|---|---|
+| 한 군데에서만 값이 다르다 | **맵 안의 조각(인스턴스)을 직접 수정**한다. Inspector에서 Width, Period, Fly Speed 같은 값을 바꾼다 | 내 `Map_내이름` 프리팹 |
+| 같은 조정을 **두세 번** 쓰게 됐다 | **Prefab Variant**로 만든다. 팔레트 조각을 우클릭 > Create > Prefab Variant | `Assets/Prefabs/Gimmicks/내이름/` |
+| **새 동작**이 필요하다 (지금 있는 값으로는 안 된다) | **스크립트를 작성**하고 프리팹으로 묶는다 | 스크립트 `Assets/Scripts/Gimmicks/내이름/`, 프리팹 `Assets/Prefabs/Gimmicks/내이름/` |
+
+### 지켜야 할 것
+
+1. **Apply 금지.** 인스턴스나 변형에서 Overrides > **Apply All**을 누르지 않는다. 팔레트 원본이 바뀌어 모두의 맵이 망가진다. 변형은 새 파일로 만들기만 한다.
+2. **같은 조정을 세 번째 쓰게 되면 변형으로 바꾼다.** 인스턴스 수정이 맵 여기저기 흩어지면 나중에 찾기 어렵고 값을 한 번에 못 바꾼다. 변형 이름은 `내이름_설명`으로 짓는다 (예: `kim_FastBird`).
+3. **자기 폴더에만 쓴다.** `Assets/Scripts/Runner/`, 팔레트 원본, `StageRig`는 프로그래머만 수정한다. 다른 사람의 `Gimmicks/` 폴더도 건드리지 않는다.
+4. **컴파일 오류가 있는 스크립트는 커밋하지 않는다.** 오류가 하나라도 있으면 pull한 사람 모두의 Unity가 Safe Mode로 열린다. 커밋하기 전에 Console에 빨간 오류가 없고 Play가 되는지 확인한다.
+5. **클래스 이름은 겹치지 않게 짓는다.** 다른 사람의 스크립트와 이름이 같으면 컴파일 오류가 난다. 이름 앞에 자기 이름을 붙인다 (예: `KimSwingBlade`).
+6. **`.meta` 파일도 같이 커밋한다.** 스크립트, 프리팹, 폴더 모두 해당된다. 없으면 연결이 끊어진다.
+7. **원본 구성을 믿지 않는다.** 프로그래머가 팔레트 원본에 값을 추가하는 것은 변형에 영향이 없다. 삭제하거나 이름을 바꾸면 변형이 깨질 수 있으니 그럴 때는 미리 알린다.
+8. **Play 중에 바꾼 값은 Play를 끄면 사라진다.** 값을 정할 때는 Play를 끄고 바꾸고 저장한다.
+9. **직접 깨 본다.** 만든 구간은 반드시 자기가 클리어해 본다 (6장 8번과 같다).
+
+### 새 동작 스크립트를 쓸 때 (코드를 쓰는 사람용)
+
+- **죽는 판정은 `Hazard` 컴포넌트를 같이 붙인다.** 직접 `RunManager.Instance.Die()`를 부르지 않는다. 그래야 거대화로 부수는 규칙(Destructible)이 똑같이 적용된다. 충돌 상자는 Trigger로 둔다.
+- **재시작하면 처음 상태로 돌아가야 한다.** 상태가 있는 기믹은 `StageReset.Requested`를 구독해서 위치와 값을 되돌린다. `Awake`에서 구독하고 `OnDestroy`에서 해제한다.
+- **사망/클리어 중에는 움직이지 않는다.** `RunManager.Instance.Current == RunManager.State.Running`일 때만 갱신한다.
+- **시간 기준 동작은 `RunManager.Instance.StageTime`을 쓴다.** 그러면 시도마다 같은 타이밍이 된다 (Gate가 그렇게 한다).
+- **플레이어와의 거리 기준 동작**은 `FindFirstObjectByType<PlayerController>()`의 위치를 쓴다.
+- **참고용 예시:** `Assets/Scripts/Runner/FlyingHazard.cs`(거리 기준으로 움직이는 장애물, 재시작 복귀 포함)와 `MovingHazard.cs`(시간 기준 왕복). 둘 다 짧으니 먼저 읽고 따라 한다.
+- **여러 맵에서 쓸 만하면** 프로그래머에게 팔레트로 올려 달라고 요청한다. 그전까지는 자기 폴더에 둔다.
+- 공용 부모 클래스(재시작 처리를 대신해 주는 틀)는 **아직 없다.** 필요하면 프로그래머에게 말한다.
+
+### 막혔을 때
+
+원본을 고쳐야 할 것 같거나, 아래 중 하나에 해당하면 혼자 해결하지 말고 프로그래머에게 말한다.
+- `Runner/` 스크립트를 수정해야 하는 경우
+- 팔레트 원본에 값이나 기능이 더 필요한 경우
+- 컴파일 오류의 원인을 모르겠는 경우
