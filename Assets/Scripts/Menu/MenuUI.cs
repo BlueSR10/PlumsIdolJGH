@@ -16,6 +16,12 @@ public static class MenuUI
     static Font font;
     static Font DefaultFont => font != null ? font : (font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
 
+    // 각 화면 컴포넌트의 Font 필드(Assets/Fonts)를 넘겨 받는다. 비어 있으면 기본 폰트(영문만)를 쓴다.
+    public static void SetFont(Font f)
+    {
+        if (f != null) font = f;
+    }
+
     // 배경색 카메라와 오버레이 Canvas(기준 1920x1080)를 만든다. 씬에 카메라가 없어도 화면이 나온다.
     public static RectTransform CreateRoot(Transform owner)
     {
@@ -57,7 +63,7 @@ public static class MenuUI
     }
 
     public static Text Label(Transform parent, string name, string text, int size, Color color, Vector2 min, Vector2 max,
-        TextAnchor align = TextAnchor.MiddleCenter, FontStyle style = FontStyle.Bold)
+        TextAnchor align = TextAnchor.MiddleCenter, FontStyle style = FontStyle.Normal)   // 폰트 파일이 이미 Bold라 가짜 굵기를 더하지 않는다
     {
         var go = new GameObject(name, typeof(RectTransform), typeof(Text), typeof(Shadow));
         go.transform.SetParent(parent, false);

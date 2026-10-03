@@ -54,7 +54,7 @@
 
 ## 시작·스테이지 선택 화면 (`Assets/Scripts/Menu/`, 씬 `Title`, `StageSelect`)
 
-- 씬에는 카메라와 컴포넌트 하나(`TitleScreen`, `StageSelectScreen`)만 있고 uGUI는 코드(`MenuUI`)가 만든다(기본 폰트는 영문뿐이라 문구는 영어, 한글 폰트가 정해지면 `MenuUI.Label`에서 교체). EventSystem 없이 마우스는 Input System으로 직접 판정(움직일 때만 선택 변경), 키 바인딩은 `MenuUI.Controls`(방향키·WASD·십자키 / Enter·Space·A / Esc·B). 아트가 오면 `MenuUI.Box`의 Image에 sprite를 넣으면 된다. 시작·선택 화면에서는 BGM을 끈다(`PlayBgm(null)`).
+- 씬에는 카메라와 컴포넌트 하나(`TitleScreen`, `StageSelectScreen`)만 있고 uGUI는 코드(`MenuUI`)가 만든다(글꼴은 `Assets/Fonts`의 NEXON Maplestory Bold, 각 화면 컴포넌트의 Font 필드에 연결하고 `MenuUI.SetFont`로 적용. **게임 이름은 "런쿠키"**: 시작 화면 제목 "런쿠키", 그 아래 "PLUM JAM", 버튼 "게임 시작". 스테이지 선택 화면 문구는 아직 영어(SELECT STAGE 등)). EventSystem 없이 마우스는 Input System으로 직접 판정(움직일 때만 선택 변경), 키 바인딩은 `MenuUI.Controls`(방향키·WASD·십자키 / Enter·Space·A / Esc·B). 아트가 오면 `MenuUI.Box`의 Image에 sprite를 넣으면 된다. 시작·선택 화면에서는 BGM을 끈다(`PlayBgm(null)`).
 - **시작 화면**: Start Game → 튜토리얼을 안 했고 `Stage_Tutorial` 씬이 있으면 바로 튜토리얼, 아니면 스테이지 목록. **튜토리얼 씬이 아직 없어 지금은 항상 목록으로 간다**(씬 이름을 `Stage_Tutorial`로 만들면 첫 시작에 자동으로 튜토리얼로 간다. 튜토리얼 클리어는 `Progress.MarkCleared`가 `TutorialDone`으로 저장).
 - **스테이지 목록**: 세계(OUTSIDE/HOUSE/OVEN) 3열 × 2칸 = 6개(`StageCatalog.Scenes`: `Stage_1_1`~`Stage_3_2`는 **임시 씬 이름**, 팀원 씬이 정해지면 그 배열만 고친다). 칸에는 번호 **1~6**을 쓰고, **잠긴 칸은 번호 대신 자물쇠 아이콘**(`Assets/Art/UI/7270617.png`, `StageSelectScreen`의 Lock Icon 필드)을 보인다. 칸 상태: LOCKED(앞을 안 깸) / COMING SOON(열렸지만 씬 없음, 들어가지 않고 안내문) / PLAY / CLEAR. 처음 선택은 도전할 스테이지, Esc는 시작 화면.
 - **진행 저장**(`Progress`, PlayerPrefs `plum.clearedStages`/`plum.tutorialDone`): `RunManager.Clear`가 현재 씬 이름으로 `MarkCleared`를 불러 목록 순서대로만 열린다(목록에 없는 테스트 맵은 무시). 시험용 메뉴 `Plum > Progress > Reset / Unlock All / Clear Next`.

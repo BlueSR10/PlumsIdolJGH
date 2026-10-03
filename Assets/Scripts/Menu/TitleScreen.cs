@@ -7,6 +7,9 @@ using UnityEngine.UI;
 // 씬에는 이 컴포넌트만 두면 UI는 코드가 만든다.
 public class TitleScreen : MonoBehaviour
 {
+    [Tooltip("메뉴 글꼴 (Assets/Fonts)")]
+    [SerializeField] Font font;
+
     MenuUI.Controls controls;
     RectTransform button;
     Image buttonImage;
@@ -19,14 +22,15 @@ public class TitleScreen : MonoBehaviour
         SoundManager.PlayBgm(null, 0f);   // 스테이지에서 돌아왔을 때 이어지는 배경음악을 끈다
 
         controls = new MenuUI.Controls();
+        MenuUI.SetFont(font);
         var root = MenuUI.CreateRoot(transform);
 
-        MenuUI.Label(root, "Title", "PLUM JAM", 190, MenuUI.Gold, new Vector2(0f, 0.55f), new Vector2(1f, 0.85f));
-        MenuUI.Label(root, "Subtitle", "Witch & Cookies", 56, MenuUI.Muted, new Vector2(0f, 0.47f), new Vector2(1f, 0.56f), style: FontStyle.Italic);
+        MenuUI.Label(root, "Title", "런쿠키", 200, MenuUI.Gold, new Vector2(0f, 0.55f), new Vector2(1f, 0.85f));
+        MenuUI.Label(root, "Subtitle", "PLUM JAM", 56, MenuUI.Muted, new Vector2(0f, 0.47f), new Vector2(1f, 0.56f));
 
         button = MenuUI.Box(root, "StartButton", new Vector2(0.36f, 0.20f), new Vector2(0.64f, 0.32f), MenuUI.CardSelected);
         buttonImage = button.GetComponent<Image>();
-        buttonLabel = MenuUI.Label(button, "Label", "START GAME", 64, Color.white, Vector2.zero, Vector2.one);
+        buttonLabel = MenuUI.Label(button, "Label", "게임 시작", 64, Color.white, Vector2.zero, Vector2.one);
 
         MenuUI.Label(root, "Hint", "Enter / Space / Click", 36, MenuUI.Muted, new Vector2(0f, 0.06f), new Vector2(1f, 0.13f));
     }

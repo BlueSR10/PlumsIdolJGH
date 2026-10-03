@@ -20,6 +20,9 @@ public class StageSelectScreen : MonoBehaviour
     [Tooltip("잠긴 스테이지에 번호 대신 보일 아이콘 (Assets/Art/UI)")]
     [SerializeField] Sprite lockIcon;
 
+    [Tooltip("메뉴 글꼴 (Assets/Fonts)")]
+    [SerializeField] Font font;
+
     MenuUI.Controls controls;
     Slot[] slots;
     bool[] ready;   // 씬이 있는가 (에디터의 FindAssets가 느려서 한 번만 확인)
@@ -33,6 +36,7 @@ public class StageSelectScreen : MonoBehaviour
         SoundManager.PlayBgm(null, 0f);
 
         controls = new MenuUI.Controls();
+        MenuUI.SetFont(font);
         var root = MenuUI.CreateRoot(transform);
 
         MenuUI.Label(root, "Header", "SELECT STAGE", 110, MenuUI.Gold, new Vector2(0f, 0.86f), new Vector2(1f, 0.98f));

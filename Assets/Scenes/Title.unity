@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4003cbf15f9ade142903c0377a5549fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TitleScreen
+  font: {fileID: 12800000, guid: cce7737fbabc5614c9d6238c0b4e17c8, type: 3}
 --- !u!4 &614654579
 Transform:
   m_ObjectHideFlags: 0
