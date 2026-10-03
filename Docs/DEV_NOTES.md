@@ -11,7 +11,7 @@
 - **레벨 디자인 때 쓸 것**: 팔레트(`Assets/Prefabs/Palette/`)의 일반 조각(Spike, Bar, Block, Gate, 아이템, Goal, Bird)과 단계별 조각 `S1_`(집 밖)·`S2_`(주방)·`S3_`(오븐), 바닥 `S?_Ground`, 발판 `S1_Platform`·`S2_Shelf`·`S3_Platform`. 배경은 스테이지 설정의 팝업(산 / 주방 / 오븐 등). 스테이지 이어 붙이기는 `StageSettings`의 "다음 스테이지" 팝업(Build Settings 등록 필요). 테스트 예시 씬 `Stage_Art_1→2→3`. 사용법은 `MAP_GUIDE.md`. 맵 검증(예상 시간 30초, Goal, 시작 바닥)은 `StageSettings` Inspector.
 - **팀원 기믹 제작 규칙**: `MAP_GUIDE.md` 9장 (인스턴스 수정 → Prefab Variant → 스크립트 순, 폴더 소유권 `Assets/Scripts/Gimmicks/이름/`, `Assets/Prefabs/Gimmicks/이름/`). 공용 부모 클래스(`GimmickBehaviour`, 재시작 처리 대행)와 폴더별 asmdef는 아직 없다. 팀원 폴더 `상연`, `은호`, `강현`은 `Assets/Scripts/Gimmicks/`와 `Assets/Prefabs/Gimmicks/` 아래에 만들어 두었다. 팀원이 코드를 쓰기 시작하면 만든다.
 - 스크립트: `Assets/Scripts/Runner/`(에디터 도구는 `Assets/Scripts/Editor/`). 씬: `Stage_Gimmicks`(전체 이어 붙임), `Stage_Test_Block/Giant/Small/Boost/Bird`, `Stage_Art_1/2/3`. `.slnx`는 IDE 생성 파일이라 커밋 제외(`.gitignore` 검토).
-- **사운드 계획**: 오디오 에셋이 도착하는 대로 연결한다. 먼저 이벤트(점프, 2단 점프, 착지, 슬라이드, 사망, 아이템 획득, 클리어, 감속 브레이크, 추격자 발소리 등)마다 클립을 지정하는 사운드 매니저를 만들어 코드 수정 없이 에셋만 꽂게 한다. 우선순위: 점프/착지/슬라이드/사망/아이템 획득, 추격 긴장감(`Chaser.Proximity`로 배경음 레이어·발소리), 이후 Bird 울음, Gate 신호음, 변신 종료 경고음, 비행 루프, 스테이지 전환음, 배경음(단계별), 튜토리얼 대화창 넘김음, UI. 훅 지점: `SpeedController.Braking`(브레이크), `Chaser.Proximity`(발소리), `RunManager`(사망/클리어/전환), `PlayerController`(점프), `PlayerForm`·`ItemPickup`(변신·아이템).
+- **사운드**: 구현 완료(`feature/m6-sound`), 사용자 확인 대기. 아래 "사운드" 참고. 아직 소리가 없는 것: 슬라이드, 착지, Bird 울음, Gate 신호음, 변신 종료 경고음, 비행 시작음, 스테이지 전환음, 튜토리얼 대화창 넘김음, UI. 에셋이 오면 `Sound` enum과 SoundManager 프리팹에 추가하고 훅(`PlayerSounds` 등)에서 `SoundManager.Play`를 부른다.
 - 보류/미구현: M6.2 튜토리얼 대화창과 페이크 요소(아이템·배경·장애물, 기획 미정이라 틀부터), 트램펄린·부서지는 발판·이동 발판(**사용자가 따로 말하기 전까지 구현하지 않음**), 빗자루 필수 구간 조각, 좌우·접근·길이 변화 장애물, 아이템·새 스프라이트 연결(아트 대기), M6.5 타이틀·스테이지 선택·클리어 화면·빌드.
 - 열린 질문: 속도 조절 방식·점프 높이 변화 여부는 사용자가 플레이하며 튜닝 중(2단 점프 1.2→1.6으로 상향). GDD 미결정: 스테이지당 기믹 수, 난이도 상승 방식, 튜토리얼 구성(레벨 디자인 전에 정해야 함).
 - GDD 동기화 완료(원본 마지막 줄 "발판 오브젝트 추가", 2026-10-03T12:52Z). 다음 동기화는 이 줄 뒤부터. 캐릭터 크기는 구현값 1/5.6으로 확정(GDD 반영).
@@ -72,6 +72,13 @@
 - 피격: `RunManager.Died` 이벤트 → 파티클 + 흰색 번쩍임(`Plum/SpriteFlash` 셰이더, `Witch_Flash` 머티리얼) + 가로 카메라 흔들림 + 0.07초 정지. 파괴 파편은 `Hazard.Broken` 이벤트. 수치는 `PlayerEffects` Inspector. 소리도 같은 이벤트에 붙이면 된다.
 - 사용자가 직접 플레이로 확인했다. 아티스트 스프라이트가 오면 FX 프리팹에 연결하고, 지금의 네모 점은 임시다. 남은 후보: 착지 먼지, 아이템 획득·변신 이펙트(`ItemPickup`, `PlayerForm` 훅), 비행 종료 경고.
 
+## 사운드 (`SoundManager`, `PlayerSounds`, `Assets/Audio/`)
+
+- `Assets/Resources/SoundManager.prefab`이 게임 시작 때 자동 생성되어 씬이 바뀌어도 유지된다(씬에 놓지 않는다). 프리팹의 **Sounds** 목록에서 소리마다 클립·볼륨·피치·지연(Delay)·앞부분만 재생(Max Length)·페이드(Fade Out)를 정한다. 클립이 비면 소리를 내지 않는다. 호출은 `SoundManager.Play(Sound.X)`, 반복 소리는 `SoundManager.SetLoop(Sound.X, 0~1)`, 배경음은 `SoundManager.PlayBgm`. 믹서 그룹은 만들지 않았고 `sfxVolume`/`bgmVolume`으로 크기를 조절한다.
+- 연결(`PlayerSounds`, Player 프리팹): 점프 `jump`(앞 0.6초만, 끝 0.25초 페이드), 2단 점프는 같은 `jump`를 피치 1.25·0.5초, 브레이크 `brake`(`SpeedController.Braking`이 켜질 때 한 번, 0.3초 안에 재발동 없음), 아이템 `item`(`ItemPickup.Picked`), 사망은 `colision` 즉시 + `fail` 0.3초 뒤에 겹침(`RunManager.Died`, 장애물·추격자·추락 공통), 클리어 `Goal_in`(`RunManager.Cleared`), 비행 `broom_fly` 루프(비행 중, 5초 비행이라 반복되지 않음), 추격자 발소리 `cookies_run` 루프(`Chaser.Proximity`에 비례해 커짐, 사망·클리어 중 꺼짐). 점프음이 1.8초로 길어 임시로 잘라 쓰고 있으니 팀원이 짧게 다시 주면 Max Length를 0으로 돌린다.
+- 배경음악: `StageSettings`의 **배경음악 선택** 팝업(`Assets/Audio/BGM`의 곡)과 **Bgm Volume**. 같은 곡이면 스테이지가 바뀌어도 이어지고 다른 곡이면 1초 동안 서서히 바뀐다. BGM mp3는 용량이 커서 임포트를 Streaming으로 바꿨다. 어느 맵에도 아직 곡을 지정하지 않았다(사용자가 고른다).
+- 자동화 환경에서는 실시간 재생이 안 돼서 이벤트 연결·재생 시작·BGM 중복 방지만 확인했고, 실제 들리는 느낌과 페이드·루프 타이밍은 직접 플레이로 확인이 필요하다.
+
 ## 기술 규약
 
 - Full HD(1920×1080), URP 2D, Pixel Perfect Camera
@@ -92,6 +99,6 @@
 - 변신 아이템(`PlayerForm`): 거대화 ×2, 소형화 ×0.4(슬라이드 높이보다 낮아야 소형화 전용 통로가 가능), 둘 다 5초. 발 위치는 고정하고 위로 늘고 줄며, 새 변신을 먹으면 교체된다. 사망·재시작 시 해제
 - 가속 아이템(`SpeedController.Boost`): 스크롤 속도 +4를 2초. 감속 키는 기본 속도에만 적용되고 가속 보너스는 그대로 더해진다
 - Gate(움직이는 장애물): 주기 3초, 닫힘 약 43%. 감속으로 도착 타이밍을 늦춰 통과
-- 추격자: 속도 4.5, 시작 거리 8, 잡히는 거리 0.6 (쿠키 그림 앞끝 0.375 + 마녀 충돌 반폭 0.25. 임시 사각형 때의 1.25는 그림이 작아지며 닿기 전에 죽는 원인이었음. 스테이지별 조정 예정). 사망 후 0.8초 뒤, 클리어 2.5초 뒤 스테이지 처음부터 재시작
+- 추격자: 속도 4.5, 시작 거리 8, 잡히는 거리 0.6 (쿠키 그림 앞끝 0.375 + 마녀 충돌 반폭 0.25. 임시 사각형 때의 1.25는 그림이 작아지며 닿기 전에 죽는 원인이었음. 스테이지별 조정 예정). 사망하면 0.8초 뒤 흰 글씨 "Game Over / Space to retry"(`GameOverHUD`, 임시 IMGUI)가 나오고 Space(게임패드 A)를 눌러야 스테이지 처음부터 재시작(0.8초 동안은 입력 무시, `RunManager.restartDelay`). Space는 점프 키이기도 해서 재시작과 같은 프레임의 점프 입력은 무시한다(`PlayerController.resetFrame`). 기존 "DEAD" 문구는 없앴다(클리어의 "CLEAR!"만 남음). 사망하면 배경음악은 0.1초 안에 꺼지고(`SoundManager.PauseBgm`, `PlayerSounds`가 부름), 재시작하면 처음부터 다시 켜진다(`RestartBgm`). 클리어 후 반복(다음 스테이지 없음)은 2.5초 뒤 자동 재시작
 - 재시작 시 속도·기준 속도·스테이지 시간(Gate 타이밍)을 시작 값으로 복원
 - 진행 막대바와 속도 표시는 임시 IMGUI
