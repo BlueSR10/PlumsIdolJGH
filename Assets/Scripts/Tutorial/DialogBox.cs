@@ -27,8 +27,8 @@ public class DialogBox : MonoBehaviour
         rt.anchorMax = Vector2.one;
         rt.offsetMin = rt.offsetMax = Vector2.zero;
 
-        // 금색 테두리 + 어두운 바탕. 마녀가 서 있는 화면 아래쪽을 가리지 않게 위쪽에 둔다
-        var frame = MenuUI.Box(root.transform, "Frame", new Vector2(0.10f, 0.72f), new Vector2(0.90f, 0.94f), MenuUI.Gold);
+        // 금색 테두리 + 어두운 바탕. 마녀가 서 있는 화면 아래쪽과 위쪽 진행 막대바·속도 표시를 모두 가리지 않는 높이(0.64~0.86)
+        var frame = MenuUI.Box(root.transform, "Frame", new Vector2(0.10f, 0.64f), new Vector2(0.90f, 0.86f), MenuUI.Gold);
         var panel = MenuUI.Box(frame, "Panel", Vector2.zero, Vector2.one, new Color(0.10f, 0.05f, 0.16f, 0.94f));
         panel.offsetMin = new Vector2(6f, 6f);
         panel.offsetMax = new Vector2(-6f, -6f);
