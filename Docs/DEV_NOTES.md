@@ -48,7 +48,8 @@
 
 ## 아트 연결
 
-- 마녀: `Player` 프리팹의 `Visual`에 Animator(`Assets/Animation/마녀/Witch.controller`), `PlayerAnimator`가 상태별로 Play(Run/Sit(착지)/Slide/Jump/DJump/Broom). 컨트롤러에는 전환이 없어 아티스트 파일은 수정하지 않았다. 달리기 속도는 스크롤 속도에 비례. 슬라이드 자세는 애니메이션이 그리므로 스프라이트를 눌러 늘리지 않고, 거대화·소형화 배율만 스프라이트에 적용한다.
+- 마녀: `Player` 프리팹의 `Visual`에 Animator(`Assets/Animation/마녀/Witch.controller`), `PlayerAnimator`가 상태별로 Play(Run/Sit(착지)/Slide/Jump/DJump/Broom/Brake(감속 키를 누르는 동안, `SpeedController.Braking`)/Dead(사망·포획, 우선순위 최상)). 컨트롤러에는 전환이 없어 아티스트 파일은 수정하지 않았다. 달리기 속도는 스크롤 속도에 비례. 슬라이드 자세는 애니메이션이 그리므로 스프라이트를 눌러 늘리지 않고, 거대화·소형화 배율만 스프라이트에 적용한다.
+- 바닥(Ground): 아티스트가 **64×64 타일 1장**으로 넘겨줄 예정. 지금은 `Ground` 팔레트 프리팹(가로 20 × 세로 1유닛 = 1280×64px)이 임시 사각형을 Tiled로 반복하므로, 타일이 오면 스프라이트만 교체하고 임포트는 PPU 64, Point, 압축 없음, Mesh Type은 Full Rect로 맞춘다.
 - 마녀 PNG 임포트를 규약(PPU 64, Point, 압축 없음)으로 바꿨다(아티스트 원본은 PPU 100, CompressedHQ). 아티스트가 같은 파일을 다시 올리면 `.meta`가 덮어써질 수 있으니 임포트 설정만 다시 맞춘다.
 - 배경: `Assets/Resources/Backgrounds/BG_*.prefab`(산, 사막, 묘지, 눈). `ParallaxBackground`가 5층을 스크롤 속도의 0/0.1/0.3/0.5/0.7배로 흘리고 화면 높이(5.625)에 맞춘다. 맵 루트 `StageSettings`의 배경 팝업으로 고르면 Play 때 생성된다(없음 = 배경 없음). 새 배경은 같은 폴더에 프리팹을 넣으면 목록에 나온다. 쓰는 곳: `Map_Gimmicks`(산). 원본 에셋은 `Assets/Art/Free 2D Cartoon Parallax Background/`(PPU 108, Bilinear).
 - 배경 이미지가 집 밖/집/오븐 순서(GDD 8.3)와는 아직 맞지 않는다. 지금은 임시로 산, 사막, 묘지, 눈이다.

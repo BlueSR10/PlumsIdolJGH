@@ -15,6 +15,8 @@ public class PlayerAnimator : MonoBehaviour
     static readonly int Jump = Animator.StringToHash("Jump");
     static readonly int DJump = Animator.StringToHash("DJump");
     static readonly int Broom = Animator.StringToHash("Broom");
+    static readonly int Brake = Animator.StringToHash("Brake");
+    static readonly int Dead = Animator.StringToHash("Dead");
 
     PlayerController player;
     SpeedController speed;
@@ -38,11 +40,14 @@ public class PlayerAnimator : MonoBehaviour
         wasGrounded = player.Grounded;
         if (landTimer > 0f) landTimer -= Time.deltaTime;
 
+        var run = RunManager.Instance;
         int target;
-        if (player.Flying) target = Broom;
+        if (run != null && run.Current == RunManager.State.Dead) target = Dead;   // 장애물·추격자 모두 같은 모션
+        else if (player.Flying) target = Broom;
         else if (!player.Grounded) target = player.DoubleJumped ? DJump : Jump;
         else if (player.Sliding) target = Slide;
         else if (landTimer > 0f) target = Sit;
+        else if (speed != null && speed.Braking) target = Brake;
         else target = Run;
 
         if (target != current)
