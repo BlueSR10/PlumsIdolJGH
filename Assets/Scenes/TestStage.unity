@@ -187,6 +187,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 750f9a139d5247041bd2ef2e14e1172e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RunnerInput
+--- !u!114 &162551744 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5589051805970566811, guid: 041ec51a2340f2e44b333deccc09d2de, type: 3}
+  m_PrefabInstance: {fileID: 162551742}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 427ff18c2bbfd754bb15c5988f1813aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
 --- !u!1 &490519613
 GameObject:
   m_ObjectHideFlags: 0
@@ -291,6 +302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeedController
   input: {fileID: 162551743}
+  player: {fileID: 162551744}
   startSpeed: 4
   minSpeed: 1.5
   acceleration: 0.1
