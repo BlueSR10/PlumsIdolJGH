@@ -29,6 +29,9 @@ public class SpeedController : MonoBehaviour
     public float ScrollSpeed => Frozen ? 0f : Speed + BoostBonus;
     public float BaseSpeed => baseSpeed;
 
+    // 지금 감속 키로 속도를 줄이고 있는지 (브레이크 애니메이션·소리용). 공중에서는 감속할 수 없으므로 false.
+    public bool Braking => !Frozen && input.BrakeHeld && (player.Grounded || player.Flying);
+
     // 가속 아이템 효과로 스크롤 속도에 더해지는 값. 감속 키는 Speed에만 적용된다.
     public float BoostBonus => boostRemaining > 0f ? boostAmount : 0f;
 
