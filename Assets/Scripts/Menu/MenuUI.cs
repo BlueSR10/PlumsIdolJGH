@@ -35,18 +35,25 @@ public static class MenuUI
             camGo.AddComponent<AudioListener>();
         }
 
+        var canvas = CreateCanvas(owner, 0);
+        var bg = Box(canvas.transform, "Background", Vector2.zero, Vector2.one, Background);
+        return bg.parent as RectTransform;
+    }
+
+    // 오버레이 Canvas (기준 1920x1080). 튜토리얼 대화창처럼 게임 화면 위에 얹는 UI도 이걸 쓴다.
+    public static Canvas CreateCanvas(Transform owner, int sortingOrder)
+    {
         var canvasGo = new GameObject("Canvas", typeof(RectTransform));
         canvasGo.transform.SetParent(owner, false);
         var canvas = canvasGo.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = sortingOrder;
         var scaler = canvasGo.AddComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920f, 1080f);
         scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
         scaler.matchWidthOrHeight = 0.5f;
-
-        var bg = Box(canvasGo.transform, "Background", Vector2.zero, Vector2.one, Background);
-        return bg.parent as RectTransform;
+        return canvas;
     }
 
     // 앵커(화면 비율)로 영역을 잡은 색 상자

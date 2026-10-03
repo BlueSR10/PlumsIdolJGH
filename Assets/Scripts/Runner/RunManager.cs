@@ -43,6 +43,9 @@ public class RunManager : MonoBehaviour
     // 골에 닿아 클리어했을 때 한 번 발생한다.
     public static event System.Action Cleared;
 
+    // 연출·튜토리얼 대화 중에 켠다: 마녀 입력을 막고(RunnerInput), 스테이지 시간·추락 판정·추격자 이동을 멈춘다.
+    public bool Holding { get; set; }
+
     public State Current { get; private set; }
     public bool Transitioning { get; private set; }   // 클리어 후 어두워지는 중
     public bool HideHud => Transitioning || fadingIn;   // 전환 연출 중에는 HUD를 숨긴다
@@ -89,6 +92,8 @@ public class RunManager : MonoBehaviour
 
     void Update()
     {
+        if (Holding) return;
+
         if (Current == State.Running)
         {
             StageTime += Time.deltaTime;
@@ -142,7 +147,7 @@ public class RunManager : MonoBehaviour
         fade.LiftWitch(true);
         yield return fade.FadeTo(1f, fadeOutTime);
         yield return new WaitForSeconds(darkHoldTime);
-        fadeInPending = true;
+        fadeInPending = sceneName.StartsWith("Stage_");   // 스테이지 선택 같은 메뉴 씬으로 갈 때는 다음 스테이지의 페이드인을 예약하지 않는다
         StageLoader.Load(sceneName);
     }
 
