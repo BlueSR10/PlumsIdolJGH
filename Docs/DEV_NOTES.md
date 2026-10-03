@@ -9,7 +9,7 @@
 - 직접 플레이 테스트 가능 확인(2026-10-03). 튜닝 값은 Inspector에서 조정: 점프·중력·슬라이드는 `Player` 프리팹의 `PlayerController`, 감속은 `StageRig`의 `SpeedController`(플레이 중 바꾼 값은 정지하면 사라지니 정지 후 프리팹에 반영), 시작 속도·가속·추격자는 맵의 `StageSettings`.
 - GDD 동기화 완료(원본 마지막 줄 "발판 오브젝트 추가", 2026-10-03T12:52Z). 다음 동기화는 이 줄 뒤부터.
 - 스크립트: `Assets/Scripts/Runner/`(에디터 도구는 `Assets/Scripts/Editor/`). 씬(`TestStage`, `TestStage_Speed`는 삭제함): `Stage_Gimmicks`(전체 이어 붙임)와 `Stage_Test_Block/Giant/Small/Boost/Bird`. 맵 디자이너 사용법은 `MAP_GUIDE.md`.
-- 커밋하지 않은 사용자 테스트 파일: `Map_TestStage.prefab`, `Stage_TestStage.unity`(+`.meta`). `.slnx`는 IDE 생성 파일이라 커밋 제외(아티스트가 올린 버전과 충돌 가능, `.gitignore` 검토).
+- `.slnx`는 IDE 생성 파일이라 커밋 제외(아티스트가 올린 버전과 충돌 가능, `.gitignore` 검토).
 - **직접 플레이 테스트는 아직 안 했다.** 키 입력으로 점프/슬라이드/감속/비행(E, 비행 중 점프=상승·슬라이드=하강)을 해 본 적이 없고(자동화 환경에서 입력 주입 불가), 프레임 단위 시뮬레이션으로 로직만 확인했다. 점프 감각, 추격 속도, Gate 타이밍 튜닝 필요.
 - 기획 반영(2026-10-03 GDD 동기화): 스테이지당 30초, 튜토리얼 스테이지 방식(점진적 기믹 추가 폐기), 빗자루 필수 구간, 배경 순서·전환 연출, 맵은 정해진 프리팹 배치. 상세는 아래 M4.5~M6.
 - 캐릭터 크기는 구현값 1/5.6으로 확정(GDD 반영). 열린 질문: 속도 조절 방식·점프 높이 변화 여부는 사용자가 플레이하며 Inspector로 튜닝 중(2단 점프 1.2→1.6으로 상향).
