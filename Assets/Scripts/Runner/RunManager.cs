@@ -142,7 +142,7 @@ public class RunManager : MonoBehaviour
         yield return fade.FadeTo(1f, fadeOutTime);
         yield return new WaitForSeconds(darkHoldTime);
         fadeInPending = true;
-        SceneManager.LoadScene(sceneName);
+        StageLoader.Load(sceneName);
     }
 
     // 전환으로 들어온 스테이지: 이전 스테이지에서 이어 달리는 채로 어두운 화면에서 마녀만 보이다가 밝아진다.

@@ -115,14 +115,13 @@ public class StageSettingsEditor : Editor
         EditorGUILayout.HelpBox("배경음악은 Play할 때 재생됩니다. 다음 스테이지가 같은 곡이면 끊기지 않고 이어집니다.", MessageType.None);
     }
 
-    // Build Settings에 등록된 씬 중에서 클리어 후 넘어갈 스테이지를 고른다. 없음 = 같은 스테이지를 다시 시작.
+    // 클리어 후 넘어갈 스테이지를 고른다. 없음 = 같은 스테이지를 다시 시작.
+    // 목록은 Assets/Scenes의 Stage_* 씬 전부라서, New Stage로 만들거나 이름을 바꾼 씬도 따로 등록하지 않아도 나온다
+    // (에디터에서는 StageLoader가 Build Settings 없이 불러오고, 빌드할 때는 StageBuildSync가 등록한다).
     void DrawNextStagePicker()
     {
         var names = new System.Collections.Generic.List<string> { "(없음 - 같은 스테이지 반복)" };
-        foreach (var scene in EditorBuildSettings.scenes)
-        {
-            if (scene.enabled) names.Add(System.IO.Path.GetFileNameWithoutExtension(scene.path));
-        }
+        foreach (var name in StageBuildSync.StageSceneNames()) names.Add(name);
 
         serializedObject.Update();
         var prop = serializedObject.FindProperty("nextStage");
@@ -137,20 +136,9 @@ public class StageSettingsEditor : Editor
             serializedObject.ApplyModifiedProperties();
         }
 
+        // 씬 이름을 바꾸면 이전에 고른 이름이 사라진다: 다시 골라야 한다
         if (!string.IsNullOrEmpty(prop.stringValue) && !names.Contains(prop.stringValue))
-            EditorGUILayout.HelpBox($"'{prop.stringValue}' 씬이 Build Settings에 없습니다. 프로그래머에게 말하세요.", MessageType.Warning);
-
-        // 목록에 안 나오는 스테이지 씬이 있으면 이유를 알려 준다 (새로 만들거나 이름을 바꾼 씬은 Build Settings에 등록돼야 목록에 나온다)
-        var missing = new System.Collections.Generic.List<string>();
-        foreach (var guid in AssetDatabase.FindAssets("t:Scene Stage_", new[] { "Assets/Scenes" }))
-        {
-            var name = System.IO.Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(guid));
-            if (name.StartsWith("Stage_") && !names.Contains(name)) missing.Add(name);
-        }
-        if (missing.Count > 0)
-            EditorGUILayout.HelpBox(
-                $"목록에 없는 스테이지 씬: {string.Join(", ", missing)}\nBuild Settings에 등록되지 않아서입니다. 프로그래머에게 등록을 부탁하세요.",
-                MessageType.Info);
+            EditorGUILayout.HelpBox($"'{prop.stringValue}' 씬을 찾을 수 없습니다. 씬 이름을 바꿨다면 목록에서 새 이름을 다시 고르세요.", MessageType.Warning);
     }
 
     static bool HasGroundAt(StageSettings s, float localX)
