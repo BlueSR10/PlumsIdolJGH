@@ -74,6 +74,7 @@ Spike, Bar, Bird는 파괴 가능이고 Block, Gate는 파괴 불가다. 아이�
 | 낮은 장애물 (점프) | S1_Thorn, S2_Crystal, S3_Fire | 프리팹 기본값 그대로 | **Width** (그림 한 장 폭의 배수) |
 | 키 큰 장애물 (파괴 불가) | S1_Vine, S2_Flask, S3_FireLong | 프리팹 기본값 그대로 | 위치만 |
 | 매달린 장애물 (슬라이드) | S1_Bud, S2_Knife, S2_Ladle, S2_Spatula, S3_Fork | 프리팹 기본값 그대로 | 위치만 |
+| 발판 (올라서는 곳, 아래에서는 통과) | S1_Platform, S2_Shelf, S3_Platform | 0.2 (윗면이 바닥에서 1.56 높이). 높이는 바꿔도 된다 | **Width** |
 
 - 이 조각들은 **Scale을 바꾸지 않는다.** 폭은 Inspector의 **Art Piece > Width**에서 바꾼다 (Repeat Width가 켜진 조각만).
 - Y는 놓을 때 정해진 높이로 생긴다. 건드리지 않는다. 충돌 크기는 임시라서 실제로 죽는 위치가 이상하면 알려 준다.
