@@ -96,11 +96,15 @@ public class RunManager : MonoBehaviour
         if (Current != State.Running) return;
         Current = State.Cleared;
         stateTimer = clearDelay;
-        speed.Frozen = true;
 
+        // 다음 스테이지가 있으면 멈추지 않고 계속 달린 채로 어두워진다. 없으면 멈추고 같은 스테이지를 다시 시작한다.
         var settings = FindFirstObjectByType<StageSettings>();
         if (settings != null && !string.IsNullOrEmpty(settings.nextStage))
+        {
             StartCoroutine(TransitionTo(settings.nextStage));
+            return;
+        }
+        speed.Frozen = true;
     }
 
     // 마녀만 남기고 어두워진 뒤 다음 스테이지 씬을 불러온다
