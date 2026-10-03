@@ -86,6 +86,7 @@ public class RunManager : MonoBehaviour
         StageTime = 0f;
         player.ResetState();
         chaser.ResetTo(StartLocalX - chaser.StartGap);
+        StageReset.Raise();   // 부서진 장애물, 먹은 아이템 복구
         Current = State.Running;
     }
 }

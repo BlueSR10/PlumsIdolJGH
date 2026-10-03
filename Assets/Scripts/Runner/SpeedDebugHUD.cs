@@ -11,6 +11,7 @@ public class SpeedDebugHUD : MonoBehaviour
     {
         style ??= new GUIStyle(GUI.skin.label) { fontSize = 28, fontStyle = FontStyle.Bold };
         style.normal.textColor = Color.white;
-        GUI.Label(new Rect(16, 12, 600, 40), $"Speed {speed.Speed:F2}   t {Time.timeSinceLevelLoad:F1}s", style);
+        string boost = speed.BoostBonus > 0f ? $" (+{speed.BoostBonus:F0} BOOST)" : "";
+        GUI.Label(new Rect(16, 12, 700, 40), $"Speed {speed.Speed:F2}{boost}   t {Time.timeSinceLevelLoad:F1}s", style);
     }
 }
