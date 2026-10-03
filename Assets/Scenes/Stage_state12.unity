@@ -236,6 +236,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7575893252317105750, guid: 921022efb019fc5418030290ff11749c, type: 3}
+      propertyPath: bgm
+      value: 
+      objectReference: {fileID: 8300000, guid: 929316544dc2d8a44ac56f71a92b4ef8, type: 3}
+    - target: {fileID: 7575893252317105750, guid: 921022efb019fc5418030290ff11749c, type: 3}
+      propertyPath: background
+      value: BG_Oven
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
