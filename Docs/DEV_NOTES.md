@@ -65,6 +65,13 @@
 - 테스트 씬 `Stage_Art_1` → `Stage_Art_2` → `Stage_Art_3`(다음 스테이지로 이어짐, 각 단계 조각과 배경을 쓴다).
 - 추격자(쿠키): `Assets/Art/쿠키타치/brave_cookie_red_64x64-Sheet.png`(4프레임 달리기, 임포트는 PPU 64/Point/압축 없음으로 변경). `Assets/Animation/쿠키/cookie_run.anim` + `Cookie.controller`를 `Chaser` 프리팹의 Animator에 연결했다. 그림이 64x64(마녀와 같은 크기)라 스케일은 임시 사각형의 2에서 1로 줄였고, 추격자 높이는 y -0.61(바닥에 맞춤, `StageRig` 안 인스턴스 포함). 사망·클리어로 쫓지 않을 때는 모션도 멈춘다. 크기를 키우고 싶으면 `Chaser` 프리팹 스케일을 바꾼다(충돌 거리 `catchDistance`는 그대로). **군단 표현**: `Chaser` 프리팹의 `Crowd` 자식에 쿠키 4마리(뒤쪽 x -0.7/-1.3/-1.9/-2.6, 멀수록 어둡게, 달리기 시작 위치를 어긋나게 재생)를 그림으로만 붙였다. 잡히는 판정은 선두(루트)만 한다. 더 늘리려면 `Crowd`에 같은 구성의 자식을 복제한다.
 
+## 이펙트 (`PlayerEffects`, `Assets/Prefabs/Effects/`)
+
+- `Player` 프리팹 아래 `FX_Dust`(슬라이드 먼지), `FX_Spark`(브레이크 불꽃, 지상일 때만), `FX_Hit`(피격), `FX_Debris`(장애물 파괴 파편) 파티클을 두고 `PlayerEffects`가 위치·속도·양만 정해 Emit한다. 모양(크기·수명·색·중력)은 FX_* 프리팹에서 조정. 지금은 그림 없이 네모 점이고, 아티스트 스프라이트가 오면 FX 프리팹의 Renderer 머티리얼/Texture Sheet Animation에 연결한다.
+- 마녀가 화면 고정이고 바닥이 스크롤되므로 월드 공간 파티클에 스크롤 속도만큼 왼쪽 속도를 더한다.
+- 피격: `RunManager.Died` 이벤트 → 파티클 + 흰색 번쩍임(`Plum/SpriteFlash` 셰이더, `Witch_Flash` 머티리얼) + 가로 카메라 흔들림 + 0.07초 정지. 파괴 파편은 `Hazard.Broken` 이벤트. 수치는 `PlayerEffects` Inspector. 소리도 같은 이벤트에 붙이면 된다.
+- 키 입력은 자동화로 안 들어가서 슬라이드 먼지 외에는 코드 경로로 직접 확인했다 (브레이크 입력 조건은 슬라이드와 같은 방식). **브레이크 불꽃과 전체 느낌은 직접 플레이로 확인이 필요하다.**
+
 ## 기술 규약
 
 - Full HD(1920×1080), URP 2D, Pixel Perfect Camera

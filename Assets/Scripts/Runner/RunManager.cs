@@ -33,6 +33,9 @@ public class RunManager : MonoBehaviour
 
     public static RunManager Instance { get; private set; }
 
+    // 사망했을 때(장애물·추격자·추락 공통) 한 번 발생한다. 이펙트·소리가 구독한다.
+    public static event System.Action Died;
+
     public State Current { get; private set; }
     public bool Transitioning { get; private set; }   // 클리어 후 어두워지는 중
     public bool HideHud => Transitioning || fadingIn;   // 전환 연출 중에는 HUD를 숨긴다
@@ -90,6 +93,7 @@ public class RunManager : MonoBehaviour
         Current = State.Dead;
         stateTimer = restartDelay;
         speed.Frozen = true;
+        Died?.Invoke();
     }
 
     public void Clear()

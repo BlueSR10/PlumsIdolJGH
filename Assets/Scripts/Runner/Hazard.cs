@@ -13,6 +13,9 @@ public class Hazard : MonoBehaviour
 
     public bool Destructible => destructible;
 
+    // 부서질 때 발생한다 (부서지기 직전의 충돌 범위). 이펙트·소리가 구독한다.
+    public static event System.Action<Bounds> Broken;
+
     void Awake()
     {
         colliders = GetComponentsInChildren<Collider2D>();
@@ -25,7 +28,14 @@ public class Hazard : MonoBehaviour
         StageReset.Requested -= Restore;
     }
 
-    public void Break() => SetBroken(true);
+    public void Break()
+    {
+        if (broken) return;
+        var bounds = colliders[0].bounds;
+        foreach (var c in colliders) bounds.Encapsulate(c.bounds);
+        Broken?.Invoke(bounds);
+        SetBroken(true);
+    }
 
     void Restore()
     {
