@@ -14,7 +14,16 @@ public static class MenuUI
     public static readonly Color Muted = new Color(0.72f, 0.66f, 0.80f);
 
     static Font font;
-    static Font DefaultFont => font != null ? font : (font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
+    static Font DefaultFont
+    {
+        get
+        {
+            if (font != null) return font;
+            var style = Resources.Load<MenuStyle>("MenuStyle");   // Assets/Resources/MenuStyle.asset
+            font = style != null && style.font != null ? style.font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            return font;
+        }
+    }
 
     // 각 화면 컴포넌트의 Font 필드(Assets/Fonts)를 넘겨 받는다. 비어 있으면 기본 폰트(영문만)를 쓴다.
     public static void SetFont(Font f)

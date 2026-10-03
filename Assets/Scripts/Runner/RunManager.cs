@@ -61,6 +61,7 @@ public class RunManager : MonoBehaviour
         fade = gameObject.AddComponent<ScreenFade>();
         fade.Init(Camera.main, player.GetComponentInChildren<SpriteRenderer>());
         gameObject.AddComponent<GameOverHUD>();
+        gameObject.AddComponent<PauseMenu>();
 
         retry = new InputAction("Retry", InputActionType.Button);
         retry.AddBinding("<Keyboard>/space");
@@ -137,6 +138,13 @@ public class RunManager : MonoBehaviour
             return;
         }
         speed.Frozen = true;
+    }
+
+    // 일시정지 메뉴의 "다시 시작": 스테이지를 처음부터
+    public void RestartStage()
+    {
+        if (Transitioning) return;
+        Restart();
     }
 
     // 마녀만 남기고 어두워진 뒤 다음 스테이지 씬을 불러온다
