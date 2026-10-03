@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] Transform visual;
     [SerializeField] float jumpHeight = 1.8f;
+    [SerializeField] float airJumpHeight = 1.2f;   // 2단 점프 높이
+    [SerializeField] int maxJumps = 2;
     [SerializeField] float gravityScale = 3f;
     [SerializeField] float jumpBufferTime = 0.1f;
     [SerializeField] float slideHeightRatio = 0.5f;
@@ -20,6 +22,7 @@ public class PlayerController : MonoBehaviour
     Vector3 visualScale;
     Vector3 visualPos;
     float jumpBuffer;
+    int jumpsUsed;
     bool sliding;
 
     public bool Grounded { get; private set; }
@@ -51,10 +54,15 @@ public class PlayerController : MonoBehaviour
     {
         Grounded = col.IsTouching(groundFilter);
 
-        if (jumpBuffer > 0f && Grounded)
+        if (Grounded && rb.linearVelocity.y <= 0.1f) jumpsUsed = 0;
+        else if (!Grounded && jumpsUsed == 0) jumpsUsed = 1;   // 점프 없이 공중에 뜬 경우 1회 소모
+
+        if (jumpBuffer > 0f && jumpsUsed < maxJumps)
         {
+            float height = jumpsUsed == 0 ? jumpHeight : airJumpHeight;
             float g = Mathf.Abs(Physics2D.gravity.y) * rb.gravityScale;
-            rb.linearVelocity = new Vector2(0f, Mathf.Sqrt(2f * g * jumpHeight));
+            rb.linearVelocity = new Vector2(0f, Mathf.Sqrt(2f * g * height));
+            jumpsUsed++;
             jumpBuffer = 0f;
             SetSliding(false);
             return;

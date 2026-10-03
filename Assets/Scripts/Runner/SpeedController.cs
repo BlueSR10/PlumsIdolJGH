@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpeedController : MonoBehaviour
 {
     [SerializeField] RunnerInput input;
+    [SerializeField] PlayerController player;
     [SerializeField] float startSpeed = 4f;          // units/sec
     [SerializeField] float minSpeed = 1.5f;          // 감속 하한
     [SerializeField] float acceleration = 0.1f;      // 기준 속도 증가량 (units/sec²)
@@ -14,6 +15,9 @@ public class SpeedController : MonoBehaviour
     float baseSpeed;
 
     public float Speed { get; private set; }
+
+    // 공중에서는 속도 조절 불가. 마녀 비행 중에만 true (비행 구현 시 사용)
+    public bool AirControl { get; set; }
 
     void Awake()
     {
@@ -25,6 +29,8 @@ public class SpeedController : MonoBehaviour
     {
         float dt = Time.deltaTime;
         baseSpeed += acceleration * dt;
+
+        if (!player.Grounded && !AirControl) return;   // 공중에서는 속도 유지
 
         if (input.BrakeHeld)
             Speed = Mathf.Max(minSpeed, Speed - brakeDeceleration * dt);
