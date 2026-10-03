@@ -37,6 +37,10 @@ public class Chaser : MonoBehaviour
     void Awake()
     {
         animators = GetComponentsInChildren<Animator>();
+
+        // 선두와 뒤따르는 쿠키 모두 무작위로 폴짝 뛴다 (그림만, 판정과 무관)
+        foreach (var a in animators)
+            if (a.GetComponent<CookieHop>() == null) a.gameObject.AddComponent<CookieHop>();
     }
 
     void Start()
