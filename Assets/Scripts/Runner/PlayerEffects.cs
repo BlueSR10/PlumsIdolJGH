@@ -13,6 +13,18 @@ public class PlayerEffects : MonoBehaviour
     [SerializeField] ParticleSystem hitBurst;
     [SerializeField] ParticleSystem debris;
     [SerializeField] ParticleSystem doubleJumpSwirl;
+    [SerializeField] ParticleSystem broomBurst;
+    [SerializeField] ParticleSystem broomTrail;
+    [SerializeField] ParticleSystem windStreaks;
+
+    [Header("빗자루 비행")]
+    [Tooltip("마녀 중심에서 빗자루 꼬리(솔) 끝까지의 위치. 반짝이가 여기서 나온다")]
+    [SerializeField] Vector2 broomTailOffset = new Vector2(-0.42f, -0.17f);
+    [SerializeField, Min(0)] int broomStartCount = 24;
+    [SerializeField, Min(0)] int broomEndCount = 8;
+    [SerializeField, Min(0f)] float trailRate = 60f;
+    [Tooltip("바람 선 초당 개수")]
+    [SerializeField, Min(0f)] float windRate = 28f;
 
     [Header("슬라이드·브레이크 (초당 개수)")]
     [SerializeField, Min(0f)] float dustRate = 30f;
@@ -49,6 +61,9 @@ public class PlayerEffects : MonoBehaviour
     float sparkAcc;
     bool hitStopping;
     bool wasDoubleJumped;
+    bool wasFlying;
+    float trailAcc;
+    float windAcc;
 
     void Awake()
     {
@@ -90,6 +105,24 @@ public class PlayerEffects : MonoBehaviour
         if (player.DoubleJumped && !wasDoubleJumped && doubleJumpSwirl != null) StartCoroutine(Swirl());
         wasDoubleJumped = player.DoubleJumped;
 
+        // 빗자루: 타는 순간과 내리는 순간에 터지고, 나는 동안 꼬리에서 반짝이, 주변으로 바람 선이 지나간다
+        if (player.Flying != wasFlying)
+        {
+            BroomBurst(player.Flying ? broomStartCount : broomEndCount);
+            wasFlying = player.Flying;
+        }
+        bool flyNow = running && player.Flying;
+        var center = b.center;
+
+        for (int n = Take(ref trailAcc, flyNow ? trailRate : 0f); n > 0; n--)
+            Emit(broomTrail, center + (Vector3)broomTailOffset + Jitter(0.06f, 0.06f),
+                new Vector2(-scroll * 0.9f - Random.Range(0.3f, 1.5f), Random.Range(-0.5f, 0.5f)));
+
+        // 바람 선: 마녀 앞뒤 넓은 범위에서 생겨 바닥보다 빠르게 왼쪽으로 지나간다
+        for (int n = Take(ref windAcc, flyNow ? windRate : 0f); n > 0; n--)
+            Emit(windStreaks, new Vector3(center.x + Random.Range(-0.8f, 4f), center.y + Random.Range(-1f, 1f), 0f),
+                new Vector2(-(scroll + Random.Range(4f, 8f)), 0f));
+
         bool slideNow = running && player.Grounded && player.Sliding;
         bool brakeNow = running && player.Grounded && speed != null && speed.Braking;
 
@@ -123,6 +156,17 @@ public class PlayerEffects : MonoBehaviour
         if (ps == null) return;
         var p = new ParticleSystem.EmitParams { position = position, velocity = velocity };
         ps.Emit(p, 1);
+    }
+
+    // 마녀 중심에서 사방으로 터진다 (탑승·하차 순간)
+    void BroomBurst(int count)
+    {
+        var center = col.bounds.center;
+        for (int i = 0; i < count; i++)
+        {
+            var dir = Random.insideUnitCircle.normalized;
+            Emit(broomBurst, center + (Vector3)(dir * 0.15f), dir * Random.Range(1.5f, 4f));
+        }
     }
 
     // 마녀 발밑 타원 위를 돌며 입자를 내보낸다. 마녀가 오르는 동안 계속 내보내서 나선형 궤적이 남는다.
