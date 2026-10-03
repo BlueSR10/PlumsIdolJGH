@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Title.unity
+    guid: 346e577e8b0ce264787e67deffeafa78
+  - enabled: 1
+    path: Assets/Scenes/StageSelect.unity
+    guid: acc9aa519f22884458cb92c5a1b52ffe
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
@@ -35,6 +41,33 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Stage_Art_3.unity
     guid: a9fd83147c036f24993b1e873092f56b
+  - enabled: 1
+    path: Assets/Scenes/Stage_Stage1.unity
+    guid: 6a729296cbbe3f04ba1e653194795b0b
+  - enabled: 1
+    path: Assets/Scenes/Stage_Stage2.unity
+    guid: 11642dd0205383e409711bb4890795b0
+  - enabled: 1
+    path: Assets/Scenes/Stage_Stage3.unity
+    guid: a7170ca8a73152c46b68dffd884ebd16
+  - enabled: 1
+    path: Assets/Scenes/Stage_Stage4.unity
+    guid: 3d6d448a11af69c499cc5c3d28b47283
+  - enabled: 1
+    path: Assets/Scenes/Stage_Stage5.unity
+    guid: 1af23da717c5fd74584b39fc07987b11
+  - enabled: 1
+    path: Assets/Scenes/Stage_Stage6.unity
+    guid: 1bed1754784ca0c4dba0384912f0cd42
+  - enabled: 1
+    path: Assets/Scenes/Stage_Test_Solid.unity
+    guid: 313d49c80ce3dd044829308613f64ade
+  - enabled: 1
+    path: Assets/Scenes/Stage_Tutorial.unity
+    guid: fdec12f61c908614d8a155082a40e9ea
+  - enabled: 1
+    path: Assets/Scenes/Ending.unity
+    guid: 95ac3bda4cdb2244a9452803b966ddd4
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -134,6 +134,12 @@
 - 배경음악: `StageSettings`의 **배경음악 선택** 팝업(`Assets/Audio/BGM`의 곡)과 **Bgm Volume**. 같은 곡이면 스테이지가 바뀌어도 이어지고 다른 곡이면 1초 동안 서서히 바뀐다. BGM mp3는 용량이 커서 임포트를 Streaming으로 바꿨다. 곡 지정 현황은 "스테이지 BGM·연결" 참고.
 - 자동화 환경에서는 실시간 재생이 안 돼서 이벤트 연결·재생 시작·BGM 중복 방지만 확인했고, 실제 들리는 느낌과 페이드·루프 타이밍은 직접 플레이로 확인이 필요하다.
 
+## 빌드 (Windows 64비트 exe)
+
+- **첫 빌드 완료**(2026-10-04): `Builds/RunCookie/RunCookie.exe`(폴더째 배포, 약 160MB, `/Builds/`는 gitignore). 씬 10개를 이 순서로 직접 지정해 빌드했다: Title, StageSelect, Stage_Tutorial, Stage_Stage1~6, Ending(테스트 씬 `Stage_Test_*`·`Stage_Art_*`·`Stage_Gimmicks`는 뺌). MCP `build`(target StandaloneWindows64, scenes 목록 지정)로 했고 약 3분 걸린다.
+- exe를 15초 실행해 예외 없이 뜨는 것까지만 확인했다(d3d12 info queue 경고는 무해). 실제 플레이(키보드·소리·전환)는 직접 확인 필요. 에디터 전용 코드(F9, `StageLoader`의 에디터 분기)는 빌드에 안 들어간다. 치트코드(0 키 15초)는 들어간다.
+- 빌드 전처리 `StageBuildSync`가 `EditorBuildSettings`에 시작 화면을 첫 씬으로 넣고 `Stage_*` 씬을 전부 등록한다(씬 목록을 직접 지정해도 이 파일은 바뀐다). 제품 이름은 아직 `PlumsIdolJGH`(창 제목·PlayerPrefs 위치에 영향, 바꾸면 저장된 진행·볼륨이 초기화됨), 회사 이름은 `DefaultCompany`.
+
 ## 기술 규약
 
 - Full HD(1920×1080), URP 2D, Pixel Perfect Camera
