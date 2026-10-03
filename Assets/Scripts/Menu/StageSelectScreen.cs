@@ -25,6 +25,7 @@ public class StageSelectScreen : MonoBehaviour
 
     MenuUI.Controls controls;
     Slot[] slots;
+    Text[] worldLabels;   // 세계 이름. 그 세계의 첫 스테이지가 잠겨 있으면 ???로 가린다
     bool[] ready;   // 씬이 있는가 (에디터의 FindAssets가 느려서 한 번만 확인)
     Text message;
     float messageTimer;
@@ -43,12 +44,13 @@ public class StageSelectScreen : MonoBehaviour
 
         int columns = StageCatalog.Worlds.Length;
         slots = new Slot[StageCatalog.Count];
+        worldLabels = new Text[columns];
         ready = new bool[StageCatalog.Count];
         for (int i = 0; i < ready.Length; i++) ready[i] = StageLoader.Exists(StageCatalog.Scenes[i]);
         for (int c = 0; c < columns; c++)
         {
             float x0 = 0.07f + c * 0.30f, x1 = x0 + 0.26f;
-            MenuUI.Label(root, "World" + c, StageCatalog.Worlds[c], 52, MenuUI.Muted, new Vector2(x0, 0.76f), new Vector2(x1, 0.84f));
+            worldLabels[c] = MenuUI.Label(root, "World" + c, StageCatalog.Worlds[c], 52, MenuUI.Muted, new Vector2(x0, 0.76f), new Vector2(x1, 0.84f));
 
             for (int r = 0; r < Rows; r++)
             {
@@ -141,6 +143,10 @@ public class StageSelectScreen : MonoBehaviour
 
     void Refresh()
     {
+        // 앞 세계의 두 스테이지를 깨서 첫 스테이지가 열리면 ???가 세계 이름으로 바뀐다
+        for (int c = 0; c < worldLabels.Length; c++)
+            worldLabels[c].text = Progress.IsUnlocked(c * Rows) ? StageCatalog.Worlds[c] : "???";
+
         for (int i = 0; i < slots.Length; i++)
         {
             var s = slots[i];

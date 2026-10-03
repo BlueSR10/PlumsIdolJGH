@@ -9,7 +9,7 @@ public static class StageCatalog
     public const string TutorialScene = "Stage_Tutorial";
 
     public const int StagesPerWorld = 2;
-    public static readonly string[] Worlds = { "OUTSIDE", "HOUSE", "OVEN" };
+    public static readonly string[] Worlds = { "마녀의 숲", "마녀의 집", "마녀의 오븐" };
 
     // 클리어해야 하는 순서(앞에서부터 차례로 열린다)
     public static readonly string[] Scenes =
