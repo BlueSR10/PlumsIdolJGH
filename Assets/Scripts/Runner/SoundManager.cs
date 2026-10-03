@@ -72,6 +72,8 @@ public class SoundManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float bgmVolume = 1f;
     [Tooltip("곡이 바뀔 때 서서히 줄고 커지는 시간(초)")]
     [SerializeField, Min(0.01f)] float bgmFadeTime = 1f;
+    [Tooltip("Game Over에서 배경음악을 끌 때 걸리는 시간(초). 딱 끊기면 소리가 튀어서 아주 짧게 줄인다")]
+    [SerializeField, Min(0.01f)] float bgmPauseFadeTime = 0.1f;
 
     readonly List<Voice> voices = new();
     readonly Dictionary<Sound, Entry> table = new();
@@ -79,6 +81,8 @@ public class SoundManager : MonoBehaviour
     readonly List<Bgm> bgmTracks = new();
     AudioClip bgmClip;
     float bgmStageVolume = 1f;
+    bool bgmPaused;            // Game Over 동안 배경음악을 끈다
+    float bgmPauseLevel = 1f;  // 1 = 들림, 0 = 꺼짐
 
     static SoundManager instance;
 
@@ -145,15 +149,23 @@ public class SoundManager : MonoBehaviour
         if (instance != null) instance.StartBgm(clip, stageVolume);
     }
 
-    // 지금 재생 중인 배경음악을 처음부터 다시 튼다 (재시작할 때)
+    // 배경음악을 끈다 (Game Over). RestartBgm이나 새 곡 재생으로 다시 켜진다.
+    public static void PauseBgm()
+    {
+        if (instance != null) instance.bgmPaused = true;
+    }
+
+    // 지금 재생 중인 배경음악을 처음부터 다시 튼다 (재시작할 때). 꺼져 있었다면 다시 켠다.
     public static void RestartBgm()
     {
         if (instance == null) return;
+        instance.bgmPaused = false;
+        instance.bgmPauseLevel = 1f;
         foreach (var t in instance.bgmTracks)
         {
             if (t.target <= 0f) continue;   // 사라지는 중인 이전 곡은 건드리지 않는다
             t.source.time = 0f;
-            if (!t.source.isPlaying) t.source.Play();
+            t.source.Play();
         }
     }
 
@@ -218,7 +230,15 @@ public class SoundManager : MonoBehaviour
     void StartBgm(AudioClip clip, float stageVolume)
     {
         bgmStageVolume = stageVolume;
-        if (clip == bgmClip) return;
+        if (clip == bgmClip && !bgmPaused) return;
+        bgmPaused = false;
+        bgmPauseLevel = 1f;
+        if (clip == bgmClip)
+        {
+            foreach (var t in bgmTracks)
+                if (t.target > 0f) t.source.UnPause();
+            return;
+        }
         bgmClip = clip;
 
         foreach (var t in bgmTracks) t.target = 0f;
@@ -262,11 +282,14 @@ public class SoundManager : MonoBehaviour
             loop.source.volume = loop.level * table[kv.Key].volume * sfxVolume;
         }
 
+        bgmPauseLevel = Mathf.MoveTowards(bgmPauseLevel, bgmPaused ? 0f : 1f, dt / bgmPauseFadeTime);
+
         for (int i = bgmTracks.Count - 1; i >= 0; i--)
         {
             var t = bgmTracks[i];
             t.level = Mathf.MoveTowards(t.level, t.target, dt / bgmFadeTime);
-            t.source.volume = t.level * bgmStageVolume * bgmVolume;
+            t.source.volume = t.level * bgmStageVolume * bgmVolume * bgmPauseLevel;
+            if (bgmPaused && bgmPauseLevel <= 0f && t.source.isPlaying) t.source.Pause();
             if (t.target <= 0f && t.level <= 0f)
             {
                 Destroy(t.source);

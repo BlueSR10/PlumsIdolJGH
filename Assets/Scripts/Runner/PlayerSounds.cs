@@ -62,9 +62,10 @@ public class PlayerSounds : MonoBehaviour
 
     void OnItemPicked(ItemPickup.Kind kind) => SoundManager.Play(Sound.Item);
 
-    // 충돌음 바로 뒤에 실패음이 겹친다 (실패음의 지연은 SoundManager 프리팹의 Delay)
+    // 배경음악은 끄고(재시작할 때 처음부터 다시 켜진다), 충돌음 바로 뒤에 실패음이 겹친다 (실패음의 지연은 SoundManager 프리팹의 Delay)
     void OnDied()
     {
+        SoundManager.PauseBgm();
         SoundManager.Play(Sound.Collision);
         SoundManager.Play(Sound.Fail);
     }
