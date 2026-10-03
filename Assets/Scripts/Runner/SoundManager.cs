@@ -145,6 +145,18 @@ public class SoundManager : MonoBehaviour
         if (instance != null) instance.StartBgm(clip, stageVolume);
     }
 
+    // 지금 재생 중인 배경음악을 처음부터 다시 튼다 (재시작할 때)
+    public static void RestartBgm()
+    {
+        if (instance == null) return;
+        foreach (var t in instance.bgmTracks)
+        {
+            if (t.target <= 0f) continue;   // 사라지는 중인 이전 곡은 건드리지 않는다
+            t.source.time = 0f;
+            if (!t.source.isPlaying) t.source.Play();
+        }
+    }
+
     // ── 효과음 ──
 
     void PlayOneShot(Sound id)

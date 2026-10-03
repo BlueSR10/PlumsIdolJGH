@@ -1,8 +1,10 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-// 한 번의 도전(시작 → 사망/클리어)을 관리한다. 스테이지 중간 체크포인트는 없으므로 사망하면 처음부터 다시 시작한다.
+// 한 번의 도전(시작 → 사망/클리어)을 관리한다. 스테이지 중간 체크포인트는 없으므로 사망하면 Game Over 화면에서
+// Space를 눌러 처음부터 다시 시작한다 (재시작하면 배경음악도 처음부터).
 // 클리어하면 맵의 StageSettings.nextStage가 있을 때 전환 연출(8.4) 후 그 스테이지로 넘어가고, 없으면 같은 스테이지를 다시 시작한다.
 public class RunManager : MonoBehaviour
 {
@@ -12,6 +14,7 @@ public class RunManager : MonoBehaviour
     [SerializeField] PlayerController player;
     [SerializeField] SpeedController speed;
     [SerializeField] Chaser chaser;
+    [Tooltip("사망 후 Game Over 문구가 나타나고 재시작 키를 받기 시작하는 시간 (초). 점프 키를 연타하다 바로 재시작되는 것을 막는다")]
     [SerializeField] float restartDelay = 0.8f;
     [SerializeField] float clearDelay = 2.5f;
     [SerializeField] float fallDeathDepth = 6f;     // 시작 높이보다 이만큼 아래로 떨어지면 사망
@@ -25,6 +28,7 @@ public class RunManager : MonoBehaviour
     static bool fadeInPending;   // 전환으로 막 들어온 씬이면 어두운 상태에서 시작한다
 
     bool fadingIn;
+    InputAction retry;
     float stateTimer;
     float spawnY;
     float startSpeed;
@@ -42,6 +46,7 @@ public class RunManager : MonoBehaviour
     public State Current { get; private set; }
     public bool Transitioning { get; private set; }   // 클리어 후 어두워지는 중
     public bool HideHud => Transitioning || fadingIn;   // 전환 연출 중에는 HUD를 숨긴다
+    public bool CanRetry => Current == State.Dead && !Transitioning && stateTimer <= 0f;   // Game Over 문구를 보여 주고 재시작을 받는 중
     public float StageTime { get; private set; }
     public float PlayerLocalX => player.transform.position.x - stage.position.x;
     public float StartLocalX { get; private set; }
@@ -52,7 +57,16 @@ public class RunManager : MonoBehaviour
         Instance = this;
         fade = gameObject.AddComponent<ScreenFade>();
         fade.Init(Camera.main, player.GetComponentInChildren<SpriteRenderer>());
+        gameObject.AddComponent<GameOverHUD>();
+
+        retry = new InputAction("Retry", InputActionType.Button);
+        retry.AddBinding("<Keyboard>/space");
+        retry.AddBinding("<Gamepad>/buttonSouth");
     }
+
+    void OnEnable() => retry.Enable();
+
+    void OnDisable() => retry.Disable();
 
     void Start()
     {
@@ -85,7 +99,10 @@ public class RunManager : MonoBehaviour
         if (Transitioning) return;
 
         stateTimer -= Time.deltaTime;
-        if (stateTimer <= 0f) Restart();
+        if (stateTimer > 0f) return;
+
+        // 사망하면 키를 눌러야 다시 시작하고, 클리어 후 반복(다음 스테이지 없음)은 자동으로 다시 시작한다
+        if (Current == State.Cleared || retry.WasPressedThisFrame()) Restart();
     }
 
     public float ToLocalX(float worldX) => worldX - stage.position.x;
@@ -152,6 +169,7 @@ public class RunManager : MonoBehaviour
         player.ResetState();
         chaser.ResetTo(StartLocalX - chaser.StartGap);
         StageReset.Raise();   // 부서진 장애물, 먹은 아이템 복구
+        SoundManager.RestartBgm();
         Current = State.Running;
     }
 }
