@@ -8,6 +8,8 @@ public class PlayerSounds : MonoBehaviour
 {
     [Tooltip("브레이크음을 다시 낼 수 있기까지 최소 간격 (초). 키를 연타하거나 착지하며 다시 눌릴 때 겹치지 않게")]
     [SerializeField, Min(0f)] float brakeCooldown = 0.3f;
+    [Tooltip("이 스크롤 속도에서 달리기 발소리를 원래 속도(피치 1)로 낸다. PlayerAnimator의 Run Speed Reference와 같게 둔다")]
+    [SerializeField, Min(0.1f)] float runSpeedReference = 4f;
 
     PlayerController player;
     SpeedController speed;
@@ -32,6 +34,8 @@ public class PlayerSounds : MonoBehaviour
         ItemPickup.Picked -= OnItemPicked;
         SoundManager.SetLoop(Sound.BroomFly, 0f);
         SoundManager.SetLoop(Sound.ChaserSteps, 0f);
+        SoundManager.SetLoop(Sound.WitchRun, 0f);
+        SoundManager.StopHold(Sound.Slide);
     }
 
     void Start()
@@ -56,6 +60,15 @@ public class PlayerSounds : MonoBehaviour
 
         SoundManager.SetLoop(Sound.BroomFly, running && player.Flying ? 1f : 0f);
         SoundManager.SetLoop(Sound.ChaserSteps, running && chaser != null ? chaser.Proximity : 0f);
+
+        // 슬라이드: 누르는 동안 이어지고(앞부분 → 중간 반복), 떼면 뒷부분이 난다
+        bool sliding = running && player.Grounded && player.Sliding;
+        SoundManager.SetHold(Sound.Slide, sliding);
+
+        // 달리기 발소리: 땅에서 그냥 달릴 때만. 속도가 빠를수록 발도 빨라지는 모션(PlayerAnimator)에 맞춰 피치를 올린다
+        bool runningOnGround = running && player.Grounded && !player.Sliding && !player.Flying && !braking;
+        float scroll = speed != null ? speed.ScrollSpeed : 0f;
+        SoundManager.SetLoop(Sound.WitchRun, runningOnGround ? 1f : 0f, Mathf.Clamp(scroll / runSpeedReference, 0.8f, 1.5f));
     }
 
     void OnJumped(bool airJump) => SoundManager.Play(airJump ? Sound.DoubleJump : Sound.Jump);
@@ -66,6 +79,7 @@ public class PlayerSounds : MonoBehaviour
     void OnDied()
     {
         SoundManager.PauseBgm();
+        SoundManager.StopHold(Sound.Slide);   // 슬라이드 중에 죽으면 뒷부분 없이 바로 끈다
         SoundManager.Play(Sound.Collision);
         SoundManager.Play(Sound.Fail);
     }

@@ -205,6 +205,7 @@ Spike, Bar, Bird는 파괴 가능이고 Block, Gate는 파괴 불가다. 아이�
 - **사망/클리어 중에는 움직이지 않는다.** `RunManager.Instance.Current == RunManager.State.Running`일 때만 갱신한다.
 - **시간 기준 동작은 `RunManager.Instance.StageTime`을 쓴다.** 그러면 시도마다 같은 타이밍이 된다 (Gate가 그렇게 한다).
 - **플레이어와의 거리 기준 동작**은 `FindFirstObjectByType<PlayerController>()`의 위치를 쓴다.
+- **날아오는 장애물(새 등 투사체)을 새로 만들면 `ProjectileSound` 컴포넌트를 붙인다.** 스크립트를 고칠 필요 없이 움직이기 시작할 때 `wind` 소리가 나고(좌우 위치, 도플러 포함), 멈추거나 마녀 뒤로 지나가면 꺼진다. 종류와 상관없이 소리는 모두 `wind`로 통일한다.
 - **참고용 예시:** `Assets/Scripts/Runner/FlyingHazard.cs`(거리 기준으로 움직이는 장애물, 재시작 복귀 포함)와 `MovingHazard.cs`(시간 기준 왕복). 둘 다 짧으니 먼저 읽고 따라 한다.
 - **여러 맵에서 쓸 만하면** 프로그래머에게 팔레트로 올려 달라고 요청한다. 그전까지는 자기 폴더에 둔다.
 - 공용 부모 클래스(재시작 처리를 대신해 주는 틀)는 **아직 없다.** 필요하면 프로그래머에게 말한다.
