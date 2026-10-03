@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     RunnerInput input;
     WitchFlight flight;
+    PlayerForm form;
     Rigidbody2D rb;
     BoxCollider2D col;
     ContactFilter2D groundFilter;
@@ -22,7 +23,9 @@ public class PlayerController : MonoBehaviour
     Vector3 visualScale;
     Vector3 visualPos;
     Vector3 spawnPosition;
+    float visualHalfHeight;
     float jumpBuffer;
+    float sizeScale = 1f;   // 거대화/소형화 배율 (PlayerForm이 설정)
     int jumpsUsed;
     bool sliding;
 
@@ -33,6 +36,7 @@ public class PlayerController : MonoBehaviour
     {
         input = GetComponent<RunnerInput>();
         flight = GetComponent<WitchFlight>();
+        form = GetComponent<PlayerForm>();
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<BoxCollider2D>();
         rb.gravityScale = gravityScale;
@@ -46,6 +50,10 @@ public class PlayerController : MonoBehaviour
         standOffset = col.offset;
         visualScale = visual.localScale;
         visualPos = visual.localPosition;
+
+        var sprite = visual.GetComponent<SpriteRenderer>()?.sprite;
+        float spriteHeight = sprite != null ? sprite.bounds.size.y : 1f;
+        visualHalfHeight = visualScale.y * spriteHeight * 0.5f;
     }
 
     void Update()
@@ -86,14 +94,28 @@ public class PlayerController : MonoBehaviour
     {
         if (sliding == value) return;
         sliding = value;
+        ApplyShape();
+    }
 
-        float ratio = value ? slideHeightRatio : 1f;
-        float drop = standSize.y * (1f - ratio) * 0.5f;
+    // 거대화/소형화 배율 변경. 발 위치(콜라이더 아래쪽)는 고정하고 위쪽으로 늘리거나 줄인다.
+    public void SetSizeScale(float scale)
+    {
+        sizeScale = scale;
+        ApplyShape();
+    }
 
-        col.size = new Vector2(standSize.x, standSize.y * ratio);
-        col.offset = new Vector2(standOffset.x, standOffset.y - drop);
-        visual.localScale = new Vector3(visualScale.x, visualScale.y * ratio, visualScale.z);
-        visual.localPosition = new Vector3(visualPos.x, visualPos.y - drop, visualPos.z);
+    // 배율과 슬라이드 상태를 합쳐 콜라이더와 스프라이트 크기를 정한다.
+    void ApplyShape()
+    {
+        float sx = sizeScale;
+        float sy = sizeScale * (sliding ? slideHeightRatio : 1f);
+        float bottom = standOffset.y - standSize.y * 0.5f;
+        var size = new Vector2(standSize.x * sx, standSize.y * sy);
+
+        col.size = size;
+        col.offset = new Vector2(standOffset.x, bottom + size.y * 0.5f);
+        visual.localScale = new Vector3(visualScale.x * sx, visualScale.y * sy, visualScale.z);
+        visual.localPosition = new Vector3(visualPos.x, visualPos.y + (sy - 1f) * visualHalfHeight, visualPos.z);
     }
 
     // 비행 시작/종료 (WitchFlight가 호출). 비행 중에는 중력을 끄고 점프·슬라이드를 막는다.
@@ -115,6 +137,7 @@ public class PlayerController : MonoBehaviour
     public void ResetState()
     {
         if (flight != null) flight.ResetState();
+        if (form != null) form.ResetState();
         rb.linearVelocity = Vector2.zero;
         rb.position = spawnPosition;
         transform.position = spawnPosition;
@@ -125,7 +148,11 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponentInParent<Hazard>() != null)
-            RunManager.Instance.Die();
+        var hazard = other.GetComponentInParent<Hazard>();
+        if (hazard == null) return;
+
+        // 거대화 중에는 파괴 가능 장애물을 부수고 지나간다. 파괴 불가 장애물과 벽(Gate)은 그대로 사망.
+        if (hazard.Destructible && form != null && form.Giant) hazard.Break();
+        else RunManager.Instance.Die();
     }
 }

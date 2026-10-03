@@ -13,13 +13,25 @@ public class SpeedController : MonoBehaviour
     [SerializeField] float recoveryRate = 4f;        // 키를 뗐을 때 기준 속도로 복귀하는 속도
 
     float baseSpeed;
+    float boostAmount;
+    float boostRemaining;
 
     public float Speed { get; private set; }
 
     // 사망/클리어 중에는 스크롤을 멈춘다
     public bool Frozen { get; set; }
-    public float ScrollSpeed => Frozen ? 0f : Speed;
+    public float ScrollSpeed => Frozen ? 0f : Speed + BoostBonus;
     public float BaseSpeed => baseSpeed;
+
+    // 가속 아이템 효과로 스크롤 속도에 더해지는 값. 감속 키는 Speed에만 적용된다.
+    public float BoostBonus => boostRemaining > 0f ? boostAmount : 0f;
+
+    // 가속 아이템 (GDD 7.2.1). 이미 가속 중이면 새 값으로 바꾸고 시간을 다시 센다.
+    public void Boost(float amount, float duration)
+    {
+        boostAmount = amount;
+        boostRemaining = duration;
+    }
 
     // 스테이지별 설정(StageSettings)이 시작 시 적용한다. Awake보다 먼저/나중에 불려도 결과가 같다.
     public void Configure(float startSpeed, float acceleration)
@@ -34,6 +46,7 @@ public class SpeedController : MonoBehaviour
     {
         Speed = speed;
         this.baseSpeed = baseSpeed;
+        boostRemaining = 0f;
     }
 
     void Awake()
@@ -48,6 +61,7 @@ public class SpeedController : MonoBehaviour
 
         float dt = Time.deltaTime;
         baseSpeed += acceleration * dt;
+        if (boostRemaining > 0f) boostRemaining -= dt;
 
         if (!player.Grounded && !player.Flying) return;   // 공중에서는 속도 유지 (마녀 비행 중에만 조절 가능)
 
