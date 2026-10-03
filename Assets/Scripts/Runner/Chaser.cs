@@ -13,6 +13,7 @@ public class Chaser : MonoBehaviour
     static readonly int RunState = Animator.StringToHash("Run");
 
     Animator[] animators;   // 선두(이 오브젝트)와 뒤따르는 쿠키들의 달리기 모션
+    CookieJostle[] jostles; // animators와 같은 순서 (선두는 null)
     float localX;
 
     public float StartGap => startGap;
@@ -39,8 +40,16 @@ public class Chaser : MonoBehaviour
         animators = GetComponentsInChildren<Animator>();
 
         // 선두와 뒤따르는 쿠키 모두 무작위로 폴짝 뛴다 (그림만, 판정과 무관)
-        foreach (var a in animators)
-            if (a.GetComponent<CookieHop>() == null) a.gameObject.AddComponent<CookieHop>();
+        // 뒤따르는 쿠키(선두 제외)는 서로 앞서거니 뒤서거니 하며 그에 맞춰 달리기 모션도 빨라지고 느려진다
+        jostles = new CookieJostle[animators.Length];
+        for (int i = 0; i < animators.Length; i++)
+        {
+            var go = animators[i].gameObject;
+            if (go.GetComponent<CookieHop>() == null) go.AddComponent<CookieHop>();
+            if (go == gameObject) continue;
+            jostles[i] = go.GetComponent<CookieJostle>();
+            if (jostles[i] == null) jostles[i] = go.AddComponent<CookieJostle>();
+        }
     }
 
     void Start()
@@ -54,7 +63,8 @@ public class Chaser : MonoBehaviour
         // 쫓아오지 않을 때(사망·클리어)는 달리기 모션도 멈춘다
         var run = RunManager.Instance;
         float s = run != null && run.Current == RunManager.State.Running ? 1f : 0f;
-        foreach (var a in animators) a.speed = s;
+        for (int i = 0; i < animators.Length; i++)
+            animators[i].speed = s * (jostles[i] != null ? jostles[i].SpeedScale : 1f);
     }
 
     void FixedUpdate()
