@@ -35,7 +35,19 @@
 
 ## 3. 조각 배치하기
 
-`Assets/Prefabs/Palette/`에서 Scene 화면으로 **끌어다 놓는다**. 놓을 때는 `Map_Forest1` 아래에 들어가야 한다 (Hierarchy에서 `Map_Forest1`의 자식으로 보이면 된다).
+`Assets/Prefabs/Palette/`에서 조각을 **Hierarchy의 `Map_Forest1` 위로 끌어다 놓는다.** 그러면 `Map_Forest1`의 자식으로 들어가고 바닥에 맞는 기본 높이로 생긴다. Scene 화면에 바로 끌어다 놓으면 높이가 어긋나거나 `Map_Forest1` 밖에 생길 수 있다.
+
+놓은 뒤 Inspector의 **Position Y**가 아래 표와 같은지 확인한다 (표에 없는 값이면 고친다).
+
+| 조각 | Position Y |
+|---|---|
+| Spike, Block(바닥) | -0.86 |
+| Bar, Block(매달기) | -0.26 |
+| 소형화 통로용 Block (Scale Y 0.5) | -0.46 |
+| Gate | 2.19 |
+| Item_* | -0.61 |
+| Goal | 1.39 |
+| Ground | -1.61 |
 
 | 조각 | 뜻 | 크기 조절 |
 |---|---|---|
@@ -59,7 +71,7 @@ Spike, Bar는 파괴 가능이고 Block, Gate는 파괴 불가다. 아이템 지
 - 소형화 전용 통로는 위에 Block을 매달아 만든다. 바닥에서 Block 아래까지의 틈을 **0.4**로 하면 일반 슬라이드(0.45)는 못 지나가고 소형화만 지나간다. 예시는 `Map_Gimmicks`를 연다.
 
 ### 위치 옮기기
-- Scene 화면에서 조각을 클릭하고 **빨간 X 화살표**를 좌우로 끌면 0.5씩 움직인다. **Y(초록 화살표)는 건드리지 않는다.** 팔레트 기본 높이가 바닥에 딱 맞다.
+- Scene 화면에서 조각을 클릭하고 **빨간 X 화살표**를 좌우로 끌면 0.5씩 움직인다. **Y(초록 화살표)는 건드리지 않는다.** 위 표의 높이가 바닥에 맞는 값이다.
 - 정확한 값은 오른쪽 Inspector의 **Transform > Position X**에 숫자를 직접 입력한다.
 - 폭 바꾸기는 Inspector의 **Scale X**에 입력한다 (가시 폭 5 = Scale X 5).
 
