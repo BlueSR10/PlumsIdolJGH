@@ -191,7 +191,7 @@ public class PlayerController : MonoBehaviour
         if (hazard == null) return;
 
         // 거대화 중에는 파괴 가능 장애물을 부수고 지나간다. 파괴 불가 장애물과 벽(Gate)은 그대로 사망.
-        if (hazard.Destructible && form != null && form.Giant) hazard.Break();
+        if (hazard.Destructible && form != null && form.Giant) hazard.Break(col.bounds);
         else RunManager.Instance.Die();
     }
 }
