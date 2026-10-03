@@ -50,6 +50,14 @@ public class EndingDirector : MonoBehaviour
     SpriteRenderer witchRenderer;
     SpeedController speed;
     Image fade;
+    bool loopRun;   // 마녀 달리기 모션 되감기 (Run 클립이 반복 설정이 아니라 직접 되감아야 한다 — PlayerAnimator와 같다)
+
+    void Update()
+    {
+        if (!loopRun || witchAnim == null) return;
+        var info = witchAnim.GetCurrentAnimatorStateInfo(0);
+        if (info.shortNameHash == RunState && info.normalizedTime >= 1f) witchAnim.Play(RunState, 0, 0f);
+    }
 
     IEnumerator Start()
     {
@@ -85,6 +93,7 @@ public class EndingDirector : MonoBehaviour
         CarriedSpeed = 0f;
         SetScroll(v);
         witchAnim.Play(RunState, 0, 0f);
+        loopRun = true;
         SetRunAnim(v);
         yield return new WaitForSeconds(runTime);
 
@@ -108,6 +117,7 @@ public class EndingDirector : MonoBehaviour
         SetScroll(0f);
         speed.Frozen = true;
         witch.position = new Vector3(centerX, witch.position.y, witch.position.z);
+        loopRun = false;
         witchAnim.speed = 1f;
         witchAnim.Play(BrakeState, 0, 0f);   // 쿠키가 다가오니 급정지
         yield return WaitArrived(right);
@@ -165,7 +175,7 @@ public class EndingDirector : MonoBehaviour
             sr.sortingOrder = witchRenderer.sortingOrder;
             var anim = go.AddComponent<Animator>();
             anim.runtimeAnimatorController = cookieController;
-            anim.Play(0, 0, (i * 0.27f) % 1f);   // 달리는 발이 똑같지 않게
+            anim.Play(RunState, 0, (i * 0.27f) % 1f);   // 달리는 발이 똑같지 않게 (쿠키 컨트롤러의 상태 이름도 Run)
 
             float x = centerX + side * (spawnDistance + i * cookieStagger * cookieSpeed);
             go.transform.position = new Vector3(x, witch.position.y, -0.01f * i);
